@@ -5,7 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#09090b">
   <title>TimeTracker Pro</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    input[type="number"] {
+      appearance: textfield;
+      -webkit-appearance: none;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input::placeholder {
+      color: #52525b;
+    }
+  </style>
 </head>
 
 <body class="bg-zinc-950 text-zinc-100 font-sans min-h-screen flex justify-center p-4 selection:bg-indigo-500/30">
@@ -14,12 +32,19 @@
 
   <!-- HEADER -->
   <div class="flex items-center justify-between mb-1">
+
     <div>
-      <h1 class="text-2xl font-black text-white tracking-tight">TimeTracker</h1>
-      <p class="text-xs text-zinc-500 mt-0.5">Control de horas · Nómina personal</p>
+      <h1 class="text-2xl font-black text-white tracking-tight">
+        TimeTracker
+      </h1>
+
+      <p class="text-xs text-zinc-500 mt-0.5">
+        Control de horas · Nómina personal
+      </p>
     </div>
 
     <div class="flex gap-2">
+
       <button
         type="button"
         id="btn-config"
@@ -30,14 +55,18 @@
       <div class="w-10 h-10 rounded-2xl flex items-center justify-center bg-gradient-to-tr from-indigo-600 to-violet-500 shadow-lg shadow-indigo-500/20">
         <span class="text-white text-lg font-bold">⚡</span>
       </div>
+
     </div>
   </div>
 
+
   <!-- CONFIGURACIÓN -->
-  <div id="panel-config"
-       class="hidden bg-zinc-900/90 border border-indigo-500/40 p-5 rounded-3xl flex flex-col gap-4 shadow-2xl">
+  <div
+    id="panel-config"
+    class="hidden bg-zinc-900/90 border border-indigo-500/40 p-5 rounded-3xl flex flex-col gap-4 shadow-2xl">
 
     <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
+
       <h3 class="text-xs font-black uppercase tracking-wider text-indigo-400">
         ⚙️ Configuración
       </h3>
@@ -48,126 +77,169 @@
         class="text-zinc-500 hover:text-white font-bold text-xs">
         ✕ Cerrar
       </button>
+
     </div>
 
-    <!-- TARIFA -->
+
+    <!-- TARIFA NORMAL -->
     <div>
+
       <label class="block text-[10px] font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">
         Tarifa normal
       </label>
 
       <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2">
-        <span class="text-zinc-500 text-xs font-bold">$</span>
+
+        <span class="text-zinc-500 text-xs font-bold">
+          $
+        </span>
 
         <input
           type="number"
+          inputmode="decimal"
+          pattern="[0-9]*[.,]?[0-9]*"
           id="tarifa-config-input"
           value="0"
           min="0"
           step="0.01"
           class="w-full bg-transparent text-sm font-black text-emerald-400 outline-none text-right">
+
       </div>
     </div>
+
 
     <!-- OVERTIME -->
     <div class="border-t border-zinc-800 pt-4">
 
-      <div class="flex items-center justify-between mb-3">
-        <div>
-          <p class="text-xs font-black text-white">⏱️ Horas extra</p>
-          <p class="text-[10px] text-zinc-500 mt-0.5">
-            Se activa únicamente cuando configures los valores.
-          </p>
-        </div>
-      </div>
+      <p class="text-xs font-black text-white mb-1">
+        ⏱️ Horas extra
+      </p>
+
+      <p class="text-[10px] text-zinc-500 mb-3">
+        Si queda en 0, no se aplican horas extra.
+      </p>
 
       <div class="grid grid-cols-2 gap-3">
 
         <div>
+
           <label class="block text-[10px] font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">
             Overtime después de
           </label>
 
           <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2">
+
             <input
               type="number"
+              inputmode="decimal"
+              pattern="[0-9]*[.,]?[0-9]*"
               id="overtime-horas-input"
               value="0"
               min="0"
               step="0.01"
               class="w-full bg-transparent text-sm font-black text-amber-400 outline-none text-right">
 
-            <span class="text-zinc-500 text-xs font-bold ml-1">h</span>
+            <span class="text-zinc-500 text-xs font-bold ml-1">
+              h
+            </span>
+
           </div>
         </div>
 
+
         <div>
+
           <label class="block text-[10px] font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">
             Tarifa overtime
           </label>
 
           <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2">
-            <span class="text-zinc-500 text-xs font-bold">$</span>
+
+            <span class="text-zinc-500 text-xs font-bold">
+              $
+            </span>
 
             <input
               type="number"
+              inputmode="decimal"
+              pattern="[0-9]*[.,]?[0-9]*"
               id="overtime-tarifa-input"
               value="0"
               min="0"
               step="0.01"
               class="w-full bg-transparent text-sm font-black text-orange-400 outline-none text-right">
+
           </div>
         </div>
 
       </div>
     </div>
 
-    <!-- IMPUESTOS -->
+
+    <!-- IMPUESTOS Y DEDUCCIÓN -->
     <div class="grid grid-cols-2 gap-3 border-t border-zinc-800 pt-4">
 
       <div>
+
         <label class="block text-[10px] font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">
-          % Impuestos
+          Impuestos
         </label>
 
         <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2">
+
           <input
             type="number"
+            inputmode="decimal"
+            pattern="[0-9]*[.,]?[0-9]*"
             id="tax-porcentaje-input"
             value="0"
             min="0"
             max="100"
             step="0.1"
-            class="w-full bg-transparent text-sm font-black text-amber-400 outline-none text-right pr-1">
+            class="w-full bg-transparent text-sm font-black text-amber-400 outline-none text-right">
 
-          <span class="text-zinc-500 text-xs font-bold">%</span>
+          <span class="text-zinc-500 text-xs font-bold ml-1">
+            %
+          </span>
+
         </div>
       </div>
 
+
       <div>
+
         <label class="block text-[10px] font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">
           Deducción fija
         </label>
 
         <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-xl px-2 py-2">
-          <span class="text-zinc-500 text-xs font-bold pl-1">$</span>
+
+          <span class="text-zinc-500 text-xs font-bold pl-1">
+            $
+          </span>
 
           <input
             type="number"
+            inputmode="decimal"
+            pattern="[0-9]*[.,]?[0-9]*"
             id="deduc-fija-input"
             value="0"
             min="0"
             step="0.01"
             class="w-full bg-transparent text-sm font-black text-rose-400 outline-none text-right">
+
         </div>
       </div>
 
     </div>
 
+
     <!-- HERRAMIENTAS -->
     <div class="border-t border-zinc-800 pt-4">
 
-      <p class="text-xs font-black text-white mb-3">🧰 Herramientas</p>
+      <p class="text-xs font-black text-white mb-3">
+        🧰 Herramientas
+      </p>
 
       <div class="grid grid-cols-2 gap-2">
 
@@ -189,14 +261,14 @@
           type="button"
           id="btn-importar-json"
           class="py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-bold text-zinc-300 active:scale-95">
-          📥 Restaurar datos
+          📥 Restaurar
         </button>
 
         <button
           type="button"
           id="btn-reset-config"
           class="py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-bold text-rose-400 active:scale-95">
-          ♻️ Restablecer
+          ♻️ Configuración
         </button>
 
       </div>
@@ -207,16 +279,12 @@
         accept=".json,application/json"
         class="hidden">
 
-      <p class="text-[9px] text-zinc-600 mt-3 leading-relaxed">
-        El respaldo guarda registros, semanas archivadas y configuración.
-        Restaurarlo reemplazará los datos actuales por los del archivo.
-      </p>
-
     </div>
 
   </div>
 
-  <!-- SELECTOR DE SEMANA -->
+
+  <!-- SEMANA -->
   <div class="bg-zinc-900/60 border border-zinc-800/80 p-4 rounded-2xl flex flex-col gap-2 shadow-xl">
 
     <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
@@ -227,83 +295,140 @@
       id="semana-selector"
       class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 text-xs text-white font-bold outline-none focus:border-indigo-500"
       style="color-scheme: dark;">
-      <option value="actual">Semana Actual (En Curso)</option>
     </select>
 
-    <p id="rango-semana-actual" class="text-[10px] text-zinc-600"></p>
+    <p
+      id="rango-semana-actual"
+      class="text-[10px] text-zinc-600">
+    </p>
 
   </div>
+
 
   <!-- RESUMEN -->
   <div class="grid grid-cols-2 gap-3">
 
-    <div class="bg-zinc-900/60 border border-zinc-800/80 p-4 rounded-2xl flex flex-col gap-0.5 shadow-xl">
+    <div class="bg-zinc-900/60 border border-zinc-800/80 p-4 rounded-2xl shadow-xl">
+
       <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
         ⏱️ Horas Totales
       </span>
 
-      <span id="total-horas-txt" class="text-2xl font-black text-white mt-1">
+      <span
+        id="total-horas-txt"
+        class="text-2xl font-black text-white mt-1 block">
         0.00h
       </span>
+
     </div>
 
-    <div class="bg-zinc-900/60 border border-zinc-800/80 p-4 rounded-2xl flex flex-col gap-0.5 shadow-xl">
+
+    <div class="bg-zinc-900/60 border border-zinc-800/80 p-4 rounded-2xl shadow-xl">
+
       <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-500">
         💵 Total Neto Est.
       </span>
 
-      <span id="total-dinero-txt" class="text-2xl font-black text-emerald-400 mt-1">
+      <span
+        id="total-dinero-txt"
+        class="text-2xl font-black text-emerald-400 mt-1 block">
         $0.00
       </span>
+
     </div>
 
   </div>
+
 
   <!-- DESGLOSE -->
   <div class="bg-zinc-900/40 border border-zinc-800/60 px-4 py-3 rounded-2xl flex flex-col gap-1.5 text-xs">
 
     <div class="flex justify-between text-zinc-400">
       <span>Horas normales:</span>
-      <span id="desglose-horas-normales" class="font-bold text-zinc-200">0.00h</span>
+      <span id="desglose-horas-normales" class="font-bold text-zinc-200">
+        0.00h
+      </span>
     </div>
 
-    <div id="row-horas-extra" class="flex justify-between text-orange-400 hidden">
+    <div
+      id="row-horas-extra"
+      class="hidden flex justify-between text-orange-400">
+
       <span>Horas extra:</span>
-      <span id="desglose-horas-extra" class="font-bold">0.00h</span>
+
+      <span
+        id="desglose-horas-extra"
+        class="font-bold">
+        0.00h
+      </span>
+
     </div>
 
     <div class="flex justify-between text-zinc-400">
-      <span>Monto Bruto:</span>
-      <span id="desglose-bruto" class="font-bold text-zinc-200">$0.00</span>
+
+      <span>
+        Monto Bruto:
+      </span>
+
+      <span
+        id="desglose-bruto"
+        class="font-bold text-zinc-200">
+        $0.00
+      </span>
+
     </div>
 
     <div class="flex justify-between text-zinc-500">
+
       <span>
-        Retención Impuestos (<span id="desglose-tax-pct">0</span>%):
+        Retención Impuestos
+        (<span id="desglose-tax-pct">0</span>%):
       </span>
 
-      <span id="desglose-impuestos" class="font-bold text-amber-500/90">
+      <span
+        id="desglose-impuestos"
+        class="font-bold text-amber-500/90">
         -$0.00
       </span>
+
     </div>
 
-    <div id="desglose-fijo-row" class="flex justify-between text-zinc-500 hidden">
-      <span>Deducciones Fijas:</span>
-      <span id="desglose-fijo" class="font-bold text-rose-500/90">
+    <div
+      id="desglose-fijo-row"
+      class="hidden flex justify-between text-zinc-500">
+
+      <span>
+        Deducciones Fijas:
+      </span>
+
+      <span
+        id="desglose-fijo"
+        class="font-bold text-rose-500/90">
         -$0.00
       </span>
+
     </div>
 
-    <div id="desglose-overtime-row" class="flex justify-between text-zinc-500 hidden">
-      <span>Pago horas extra:</span>
-      <span id="desglose-overtime" class="font-bold text-orange-400">
+    <div
+      id="desglose-overtime-row"
+      class="hidden flex justify-between text-zinc-500">
+
+      <span>
+        Pago horas extra:
+      </span>
+
+      <span
+        id="desglose-overtime"
+        class="font-bold text-orange-400">
         $0.00
       </span>
+
     </div>
 
   </div>
 
-  <!-- TARIFA RÁPIDA -->
+
+  <!-- TARIFA -->
   <div class="bg-zinc-900/60 border border-zinc-800/80 p-4 rounded-2xl flex items-center justify-between text-sm shadow-md">
 
     <span class="text-zinc-400 font-medium">
@@ -312,15 +437,19 @@
 
     <div class="flex items-center gap-1 bg-zinc-950 px-3 py-1.5 rounded-xl border border-zinc-800">
 
-      <span class="text-zinc-500 font-bold">$</span>
+      <span class="text-zinc-500 font-bold">
+        $
+      </span>
 
       <input
         type="number"
+        inputmode="decimal"
+        pattern="[0-9]*[.,]?[0-9]*"
         id="tarifa-input"
-        value="0.00"
+        value="0"
         min="0"
         step="0.01"
-        class="bg-transparent text-emerald-400 font-black text-right w-16 outline-none">
+        class="bg-transparent text-emerald-400 font-black text-right w-20 outline-none">
 
       <span class="text-zinc-600 font-medium text-xs ml-1">
         / hr
@@ -330,13 +459,16 @@
 
   </div>
 
-  <!-- REGISTRO -->
-  <div id="contenedor-registro"
-       class="bg-zinc-900/60 border border-zinc-800/80 p-5 rounded-3xl flex flex-col gap-4 shadow-xl">
+
+  <!-- NUEVO REGISTRO -->
+  <div
+    id="contenedor-registro"
+    class="bg-zinc-900/60 border border-zinc-800/80 p-5 rounded-3xl flex flex-col gap-4 shadow-xl">
 
     <h2 class="text-sm font-bold text-white tracking-wide">
       Nuevo Registro Diario
     </h2>
+
 
     <div>
 
@@ -351,6 +483,7 @@
         style="color-scheme: dark;">
 
     </div>
+
 
     <div class="grid grid-cols-2 gap-3">
 
@@ -379,6 +512,7 @@
 
       </div>
 
+
       <div>
 
         <label class="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">
@@ -406,6 +540,7 @@
 
     </div>
 
+
     <div>
 
       <label class="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">
@@ -416,9 +551,12 @@
 
         <input
           type="number"
+          inputmode="numeric"
+          pattern="[0-9]*"
           id="descanso-input"
           value="30"
           min="0"
+          step="1"
           class="flex-1 bg-transparent text-sm font-bold text-white outline-none">
 
         <span class="text-zinc-600 text-xs font-semibold">
@@ -429,14 +567,16 @@
 
     </div>
 
+
     <button
       type="button"
       id="btn-guardar"
-      class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold rounded-xl text-sm shadow-lg shadow-indigo-950 transition-all active:scale-[0.97] mt-1">
+      class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold rounded-xl text-sm shadow-lg shadow-indigo-950 transition-all active:scale-[0.97]">
       📥 Guardar Turno en Historial
     </button>
 
   </div>
+
 
   <!-- HISTORIAL -->
   <div class="flex flex-col gap-2.5">
@@ -454,7 +594,7 @@
         <button
           type="button"
           id="btn-cerrar-semana"
-          class="text-[11px] font-bold text-indigo-400 hover:text-indigo-300">
+          class="text-[11px] font-bold text-indigo-400">
           📦 Archivar Semana
         </button>
 
@@ -469,11 +609,15 @@
 
     </div>
 
-    <div id="historial-lista" class="flex flex-col gap-2"></div>
+    <div
+      id="historial-lista"
+      class="flex flex-col gap-2">
+    </div>
 
   </div>
 
 </div>
+
 
 <!-- MODAL EDITAR -->
 <div
@@ -497,9 +641,11 @@
 
     </div>
 
+
     <div class="flex flex-col gap-4">
 
       <div>
+
         <label class="text-[10px] uppercase font-bold text-zinc-500">
           Fecha
         </label>
@@ -509,11 +655,14 @@
           id="editar-fecha"
           class="w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-white"
           style="color-scheme: dark;">
+
       </div>
+
 
       <div class="grid grid-cols-2 gap-3">
 
         <div>
+
           <label class="text-[10px] uppercase font-bold text-zinc-500">
             Entrada
           </label>
@@ -523,9 +672,12 @@
             id="editar-entrada"
             class="w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-white"
             style="color-scheme: dark;">
+
         </div>
 
+
         <div>
+
           <label class="text-[10px] uppercase font-bold text-zinc-500">
             Salida
           </label>
@@ -535,21 +687,29 @@
             id="editar-salida"
             class="w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-white"
             style="color-scheme: dark;">
+
         </div>
 
       </div>
 
+
       <div>
+
         <label class="text-[10px] uppercase font-bold text-zinc-500">
           Break
         </label>
 
         <input
           type="number"
+          inputmode="numeric"
+          pattern="[0-9]*"
           id="editar-descanso"
           min="0"
+          step="1"
           class="w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-white">
+
       </div>
+
 
       <button
         type="button"
@@ -563,44 +723,50 @@
   </div>
 </div>
 
+
 <script>
-/* =========================================================
-   UTILIDADES
-========================================================= */
+
+/* ============================================================
+   TIME TRACKER PRO
+   VERSIÓN SEGURA / COMPATIBLE
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   FUNCIONES BÁSICAS
+------------------------------------------------------------ */
 
 const $ = id => document.getElementById(id);
 
-const obtenerFechaLocalCliente = () => {
+const fechaLocal = () => {
+
   const d = new Date();
 
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
 };
 
-const getHM = () => {
+const horaLocal = () => {
+
   const d = new Date();
 
-  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+
 };
 
 const dinero = valor => {
-  return Number(valor || 0).toLocaleString('es-MX', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+
+  return Number(valor || 0).toLocaleString('es-MX',{
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
   });
+
 };
 
-const escaparHTML = texto => {
-  return String(texto ?? '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
-};
 
-/* =========================================================
+/* ------------------------------------------------------------
    ELEMENTOS
-========================================================= */
+------------------------------------------------------------ */
 
 const tarifaInput = $('tarifa-input');
 const tarifaConfigInput = $('tarifa-config-input');
@@ -616,9 +782,9 @@ const btnCerrarSemana = $('btn-cerrar-semana');
 
 const historialLista = $('historial-lista');
 const semanaSelector = $('semana-selector');
+
 const contenedorRegistro = $('contenedor-registro');
 const tituloHistorial = $('titulo-historial');
-const rangoSemanaActual = $('rango-semana-actual');
 
 const btnConfig = $('btn-config');
 const btnCerrarConfig = $('btn-cerrar-config');
@@ -646,72 +812,249 @@ const desgloseFijo = $('desglose-fijo');
 const desgloseOvertimeRow = $('desglose-overtime-row');
 const desgloseOvertime = $('desglose-overtime');
 
+const rangoSemanaActual = $('rango-semana-actual');
+
 const modalEditar = $('modal-editar');
 const editarFecha = $('editar-fecha');
 const editarEntrada = $('editar-entrada');
 const editarSalida = $('editar-salida');
 const editarDescanso = $('editar-descanso');
 
-let indiceEditando = null;
-let vistaEditando = null;
 
-/* =========================================================
-   DATOS EXISTENTES
-   IMPORTANTE:
-   NO SE CAMBIAN LAS CLAVES ORIGINALES.
-========================================================= */
+/* ============================================================
+   PROTECCIÓN DE DATOS EXISTENTES
+   ============================================================
 
-let historial = JSON.parse(localStorage.getItem('tt_data') || '[]');
+   MUY IMPORTANTE:
 
-let semanasArchivadas =
-  JSON.parse(localStorage.getItem('tt_semanas') || '[]');
+   Antes de hacer cualquier escritura, hacemos una copia
+   interna de TODAS las claves originales relacionadas con
+   TimeTracker.
+
+   No borramos las claves originales.
+   No las reemplazamos con valores por defecto.
+   ============================================================ */
+
+const CLAVES_PROTEGIDAS = [
+  'tt_data',
+  'tt_semanas',
+  'tt_tarifa',
+  'tt_tax_pct',
+  'tt_deduc_fija',
+  'tt_last_entrada',
+  'tt_last_salida'
+];
+
+
+function crearRespaldoInterno() {
+
+  const existente =
+    localStorage.getItem('tt_internal_backup_v4');
+
+  /*
+    Si ya existe un respaldo, no lo reemplazamos.
+    Así conservamos la primera copia encontrada.
+  */
+
+  if (existente) return;
+
+  const respaldo = {};
+
+  let encontroDatos = false;
+
+  CLAVES_PROTEGIDAS.forEach(clave => {
+
+    const valor =
+      localStorage.getItem(clave);
+
+    if (valor !== null) {
+
+      respaldo[clave] = valor;
+      encontroDatos = true;
+
+    }
+
+  });
+
+  /*
+    Solo creamos el backup si realmente había
+    información existente.
+  */
+
+  if (encontroDatos) {
+
+    respaldo.fecha =
+      new Date().toISOString();
+
+    try {
+
+      localStorage.setItem(
+        'tt_internal_backup_v4',
+        JSON.stringify(respaldo)
+      );
+
+    } catch(error) {
+
+      console.warn(
+        'No fue posible crear respaldo interno:',
+        error
+      );
+
+    }
+
+  }
+
+}
+
 
 /*
-  Compatibilidad:
-
-  Si la persona YA tiene tarifa guardada:
-  -> se conserva.
-
-  Si NO tiene tarifa:
-  -> 0.
-
-  Igual para impuestos, overtime y deducción.
+  ESTE ES EL PRIMER PASO.
+  Antes de leer/escribir configuraciones.
 */
 
-let tarifa = localStorage.getItem('tt_tarifa') !== null
-  ? parseFloat(localStorage.getItem('tt_tarifa')) || 0
-  : 0;
+crearRespaldoInterno();
 
-let taxPorcentaje = localStorage.getItem('tt_tax_pct') !== null
-  ? parseFloat(localStorage.getItem('tt_tax_pct')) || 0
-  : 0;
 
-let deducFija = localStorage.getItem('tt_deduc_fija') !== null
-  ? parseFloat(localStorage.getItem('tt_deduc_fija')) || 0
-  : 0;
+/* ============================================================
+   CARGA SEGURA DE DATOS
+   ============================================================ */
 
-let overtimeHoras = localStorage.getItem('tt_overtime_horas') !== null
-  ? parseFloat(localStorage.getItem('tt_overtime_horas')) || 0
-  : 0;
+function leerJSON(clave, defecto) {
 
-let overtimeTarifa = localStorage.getItem('tt_overtime_tarifa') !== null
-  ? parseFloat(localStorage.getItem('tt_overtime_tarifa')) || 0
-  : 0;
+  const valor =
+    localStorage.getItem(clave);
 
-/* =========================================================
-   VALORES INICIALES
-========================================================= */
+  if (valor === null) {
+    return defecto;
+  }
 
-fechaInput.value = obtenerFechaLocalCliente();
+  try {
 
-tarifaInput.value = tarifa;
-tarifaConfigInput.value = tarifa;
+    const resultado =
+      JSON.parse(valor);
 
-taxPorcentajeInput.value = taxPorcentaje;
-deducFijaInput.value = deducFija;
+    return resultado;
 
-overtimeHorasInput.value = overtimeHoras;
-overtimeTarifaInput.value = overtimeTarifa;
+  } catch(error) {
+
+    console.error(
+      `Error leyendo ${clave}`,
+      error
+    );
+
+    /*
+      Si una clave está corrupta, NO la borramos.
+      Devolvemos el valor por defecto para que la aplicación
+      pueda seguir funcionando sin destruir el original.
+    */
+
+    return defecto;
+
+  }
+
+}
+
+
+/* DATOS ORIGINALES */
+
+let historial =
+  leerJSON('tt_data', []);
+
+let semanasArchivadas =
+  leerJSON('tt_semanas', []);
+
+
+/* ============================================================
+   CONFIGURACIÓN
+   ============================================================
+
+   REGLA:
+
+   Si el usuario YA tenía el valor:
+      -> se conserva.
+
+   Si nunca existió:
+      -> empieza en 0.
+
+   Esto evita que usuarios existentes pierdan
+   su tarifa o impuestos.
+============================================================ */
+
+function leerNumeroSeguro(clave) {
+
+  const valor =
+    localStorage.getItem(clave);
+
+  if (valor === null) {
+    return 0;
+  }
+
+  const numero =
+    parseFloat(
+      String(valor).replace(',', '.')
+    );
+
+  return Number.isFinite(numero)
+    ? numero
+    : 0;
+
+}
+
+
+let tarifa =
+  leerNumeroSeguro('tt_tarifa');
+
+let taxPorcentaje =
+  leerNumeroSeguro('tt_tax_pct');
+
+let deducFija =
+  leerNumeroSeguro('tt_deduc_fija');
+
+
+/*
+  Estas dos claves NO existían en la versión anterior.
+
+  Por eso empiezan en 0 para todos.
+
+  No modifican ningún dato existente.
+*/
+
+let overtimeHoras =
+  leerNumeroSeguro('tt_overtime_horas');
+
+let overtimeTarifa =
+  leerNumeroSeguro('tt_overtime_tarifa');
+
+
+/* ============================================================
+   VALORES VISUALES
+============================================================ */
+
+fechaInput.value =
+  fechaLocal();
+
+tarifaInput.value =
+  tarifa;
+
+tarifaConfigInput.value =
+  tarifa;
+
+taxPorcentajeInput.value =
+  taxPorcentaje;
+
+deducFijaInput.value =
+  deducFija;
+
+overtimeHorasInput.value =
+  overtimeHoras;
+
+overtimeTarifaInput.value =
+  overtimeTarifa;
+
+
+/*
+  Conservamos también las últimas horas existentes.
+*/
 
 entradaInput.value =
   localStorage.getItem('tt_last_entrada') || '';
@@ -719,135 +1062,17 @@ entradaInput.value =
 salidaInput.value =
   localStorage.getItem('tt_last_salida') || '';
 
-/* =========================================================
-   SEMANA DOMINGO - SÁBADO
-========================================================= */
 
-function obtenerRangoSemanaActual() {
-
-  const ahora = new Date();
-
-  const dia = ahora.getDay();
-
-  const inicio = new Date(ahora);
-  inicio.setHours(0, 0, 0, 0);
-  inicio.setDate(ahora.getDate() - dia);
-
-  const fin = new Date(inicio);
-  fin.setDate(inicio.getDate() + 6);
-
-  const formato = fecha => {
-    return fecha.toLocaleDateString('es-MX', {
-      day: 'numeric',
-      month: 'short'
-    });
-  };
-
-  return `${formato(inicio)} - ${formato(fin)}`;
-}
-
-rangoSemanaActual.innerText =
-  `Semana: domingo → sábado · ${obtenerRangoSemanaActual()}`;
-
-/* =========================================================
-   TIEMPO
-========================================================= */
-
-function calcularTurno(item) {
-
-  const [eH, eM] = item.entrada.split(':').map(Number);
-  const [sH, sM] = item.salida.split(':').map(Number);
-
-  let diffMin =
-    (sH * 60 + sM) -
-    (eH * 60 + eM);
-
-  /*
-    Si salida es igual o anterior a entrada,
-    se considera turno nocturno.
-  */
-  if (diffMin <= 0) {
-    diffMin += 1440;
-  }
-
-  const descanso = Math.max(
-    0,
-    Number(item.descanso) || 0
-  );
-
-  const minutosNetos = diffMin - descanso;
-
-  if (minutosNetos <= 0) {
-    return 0;
-  }
-
-  return minutosNetos / 60;
-}
-
-/* =========================================================
-   CÁLCULO DE PAGO
-========================================================= */
-
-function calcularPago(totalHoras) {
-
-  /*
-    Overtime SOLO se activa cuando:
-    overtimeHoras > 0
-    Y overtimeTarifa > 0
-  */
-
-  const overtimeActivo =
-    overtimeHoras > 0 &&
-    overtimeTarifa > 0;
-
-  let horasNormales = totalHoras;
-  let horasExtra = 0;
-
-  if (overtimeActivo && totalHoras > overtimeHoras) {
-
-    horasNormales = overtimeHoras;
-    horasExtra = totalHoras - overtimeHoras;
-
-  }
-
-  const pagoNormal =
-    horasNormales * tarifa;
-
-  const pagoExtra =
-    horasExtra * overtimeTarifa;
-
-  const bruto =
-    pagoNormal + pagoExtra;
-
-  const impuestos =
-    bruto * (taxPorcentaje / 100);
-
-  const deduccion =
-    bruto > 0 ? deducFija : 0;
-
-  const neto =
-    Math.max(
-      0,
-      bruto - impuestos - deduccion
-    );
-
-  return {
-    horasNormales,
-    horasExtra,
-    pagoNormal,
-    pagoExtra,
-    bruto,
-    impuestos,
-    deduccion,
-    neto
-  };
-}
-
-/* =========================================================
-   GUARDADO
-========================================================= */
+/* ============================================================
+   GUARDADO SEGURO
+============================================================ */
 
 function guardarConfiguracion() {
+
+  /*
+    Estas claves son nuevas o ya existentes.
+    Nunca tocamos tt_data ni tt_semanas aquí.
+  */
 
   localStorage.setItem(
     'tt_tarifa',
@@ -873,193 +1098,11 @@ function guardarConfiguracion() {
     'tt_overtime_tarifa',
     String(overtimeTarifa)
   );
+
 }
 
-function saveCurrentInputs() {
 
-  localStorage.setItem(
-    'tt_last_entrada',
-    entradaInput.value
-  );
-
-  localStorage.setItem(
-    'tt_last_salida',
-    salidaInput.value
-  );
-}
-
-/* =========================================================
-   CONFIGURACIÓN
-========================================================= */
-
-btnConfig.onclick = () => {
-  panelConfig.classList.toggle('hidden');
-};
-
-btnCerrarConfig.onclick = () => {
-  panelConfig.classList.add('hidden');
-};
-
-function actualizarTarifa(valor) {
-
-  tarifa = Math.max(
-    0,
-    parseFloat(valor) || 0
-  );
-
-  tarifaInput.value = tarifa;
-  tarifaConfigInput.value = tarifa;
-
-  guardarConfiguracion();
-  renderApp();
-}
-
-tarifaInput.oninput = e => {
-  actualizarTarifa(e.target.value);
-};
-
-tarifaConfigInput.oninput = e => {
-  actualizarTarifa(e.target.value);
-};
-
-taxPorcentajeInput.oninput = e => {
-
-  taxPorcentaje = Math.min(
-    100,
-    Math.max(0, parseFloat(e.target.value) || 0)
-  );
-
-  guardarConfiguracion();
-  renderApp();
-};
-
-deducFijaInput.oninput = e => {
-
-  deducFija =
-    Math.max(0, parseFloat(e.target.value) || 0);
-
-  guardarConfiguracion();
-  renderApp();
-};
-
-overtimeHorasInput.oninput = e => {
-
-  overtimeHoras =
-    Math.max(0, parseFloat(e.target.value) || 0);
-
-  guardarConfiguracion();
-  renderApp();
-};
-
-overtimeTarifaInput.oninput = e => {
-
-  overtimeTarifa =
-    Math.max(0, parseFloat(e.target.value) || 0);
-
-  guardarConfiguracion();
-  renderApp();
-};
-
-/* =========================================================
-   BOTONES HORA ACTUAL
-========================================================= */
-
-$('btn-now-entrada').onclick = () => {
-
-  entradaInput.value = getHM();
-  saveCurrentInputs();
-};
-
-$('btn-now-salida').onclick = () => {
-
-  salidaInput.value = getHM();
-  saveCurrentInputs();
-};
-
-entradaInput.onchange = saveCurrentInputs;
-salidaInput.onchange = saveCurrentInputs;
-
-/* =========================================================
-   SELECTOR SEMANAS
-========================================================= */
-
-function actualizarSelectorSemanas() {
-
-  semanaSelector.innerHTML = '';
-
-  const actual = document.createElement('option');
-
-  actual.value = 'actual';
-  actual.innerText =
-    `Semana Actual · ${obtenerRangoSemanaActual()}`;
-
-  semanaSelector.appendChild(actual);
-
-  semanasArchivadas.forEach(sem => {
-
-    const option =
-      document.createElement('option');
-
-    option.value = sem.id;
-
-    option.innerText =
-      `📦 ${sem.rango} · ${sem.totalHoras}h`;
-
-    semanaSelector.appendChild(option);
-  });
-}
-
-/* =========================================================
-   RECALCULAR SEMANA ARCHIVADA
-========================================================= */
-
-function recalcularTotalesSemanaArchivada(sem) {
-
-  if (!sem.datos.length) {
-
-    sem.rango = 'Vacía';
-    sem.totalHoras = '0.00';
-
-    return;
-  }
-
-  const fechas =
-    sem.datos
-      .map(h => h.fecha)
-      .sort();
-
-  const formatearF = fStr => {
-
-    const [y, m, d] =
-      fStr.split('-').map(Number);
-
-    return new Date(y, m - 1, d)
-      .toLocaleDateString('es-MX', {
-        day: 'numeric',
-        month: 'short'
-      });
-  };
-
-  sem.rango =
-    `${formatearF(fechas[0])} - ${formatearF(fechas[fechas.length - 1])}`;
-
-  let totalH = 0;
-
-  sem.datos.forEach(item => {
-
-    totalH += calcularTurno(item);
-
-  });
-
-  sem.totalHoras =
-    totalH.toFixed(2);
-}
-
-/* =========================================================
-   RENDER
-========================================================= */
-
-function renderApp() {
+function guardarDatos() {
 
   localStorage.setItem(
     'tt_data',
@@ -1071,20 +1114,604 @@ function renderApp() {
     JSON.stringify(semanasArchivadas)
   );
 
+}
+
+
+function guardarUltimasHoras() {
+
+  localStorage.setItem(
+    'tt_last_entrada',
+    entradaInput.value
+  );
+
+  localStorage.setItem(
+    'tt_last_salida',
+    salidaInput.value
+  );
+
+}
+
+
+/* ============================================================
+   SEMANA DOMINGO → SÁBADO
+============================================================ */
+
+function obtenerRangoSemanaActual() {
+
+  const ahora =
+    new Date();
+
+  const dia =
+    ahora.getDay();
+
+  const inicio =
+    new Date(ahora);
+
+  inicio.setHours(
+    0,0,0,0
+  );
+
+  inicio.setDate(
+    ahora.getDate() - dia
+  );
+
+  const fin =
+    new Date(inicio);
+
+  fin.setDate(
+    inicio.getDate() + 6
+  );
+
+  const formato =
+    fecha => fecha.toLocaleDateString(
+      'es-MX',
+      {
+        day:'numeric',
+        month:'short'
+      }
+    );
+
+  return `${formato(inicio)} - ${formato(fin)}`;
+
+}
+
+
+rangoSemanaActual.innerText =
+  `Semana domingo → sábado · ${obtenerRangoSemanaActual()}`;
+
+
+/* ============================================================
+   CONFIGURACIÓN
+============================================================ */
+
+btnConfig.onclick = () => {
+
+  panelConfig.classList.toggle(
+    'hidden'
+  );
+
+};
+
+
+btnCerrarConfig.onclick = () => {
+
+  panelConfig.classList.add(
+    'hidden'
+  );
+
+};
+
+
+/* ------------------------------------------------------------
+   TARIFA
+------------------------------------------------------------ */
+
+function actualizarTarifa(valor) {
+
+  /*
+    Permitimos tanto:
+      22.75
+      22,75
+
+    y lo convertimos internamente a número.
+  */
+
+  const limpio =
+    String(valor)
+      .replace(',', '.')
+      .replace(/[^0-9.]/g,'');
+
+  const numero =
+    parseFloat(limpio);
+
+  tarifa =
+    Number.isFinite(numero)
+      ? Math.max(0,numero)
+      : 0;
+
+  tarifaInput.value =
+    tarifa;
+
+  tarifaConfigInput.value =
+    tarifa;
+
   guardarConfiguracion();
+
+  renderApp();
+
+}
+
+
+tarifaInput.addEventListener(
+  'input',
+  e => actualizarTarifa(e.target.value)
+);
+
+
+tarifaConfigInput.addEventListener(
+  'input',
+  e => actualizarTarifa(e.target.value)
+);
+
+
+/* ------------------------------------------------------------
+   IMPUESTOS
+------------------------------------------------------------ */
+
+taxPorcentajeInput.addEventListener(
+  'input',
+  e => {
+
+    const valor =
+      String(e.target.value)
+        .replace(',', '.');
+
+    taxPorcentaje =
+      Math.min(
+        100,
+        Math.max(
+          0,
+          parseFloat(valor) || 0
+        )
+      );
+
+    guardarConfiguracion();
+
+    renderApp();
+
+  }
+);
+
+
+/* ------------------------------------------------------------
+   DEDUCCIÓN
+------------------------------------------------------------ */
+
+deducFijaInput.addEventListener(
+  'input',
+  e => {
+
+    const valor =
+      String(e.target.value)
+        .replace(',', '.');
+
+    deducFija =
+      Math.max(
+        0,
+        parseFloat(valor) || 0
+      );
+
+    guardarConfiguracion();
+
+    renderApp();
+
+  }
+);
+
+
+/* ------------------------------------------------------------
+   OVERTIME
+------------------------------------------------------------ */
+
+overtimeHorasInput.addEventListener(
+  'input',
+  e => {
+
+    const valor =
+      String(e.target.value)
+        .replace(',', '.');
+
+    overtimeHoras =
+      Math.max(
+        0,
+        parseFloat(valor) || 0
+      );
+
+    guardarConfiguracion();
+
+    renderApp();
+
+  }
+);
+
+
+overtimeTarifaInput.addEventListener(
+  'input',
+  e => {
+
+    const valor =
+      String(e.target.value)
+        .replace(',', '.');
+
+    overtimeTarifa =
+      Math.max(
+        0,
+        parseFloat(valor) || 0
+      );
+
+    guardarConfiguracion();
+
+    renderApp();
+
+  }
+);
+
+
+/* ============================================================
+   BOTONES DE HORA ACTUAL
+============================================================ */
+
+$('btn-now-entrada').onclick =
+  () => {
+
+    entradaInput.value =
+      horaLocal();
+
+    guardarUltimasHoras();
+
+  };
+
+
+$('btn-now-salida').onclick =
+  () => {
+
+    salidaInput.value =
+      horaLocal();
+
+    guardarUltimasHoras();
+
+  };
+
+
+entradaInput.onchange =
+  guardarUltimasHoras;
+
+salidaInput.onchange =
+  guardarUltimasHoras;
+
+
+/* ============================================================
+   CÁLCULO DE TURNO
+============================================================ */
+
+function calcularTurno(item) {
+
+  if (
+    !item ||
+    !item.entrada ||
+    !item.salida
+  ) {
+    return 0;
+  }
+
+  const entrada =
+    item.entrada.split(':').map(Number);
+
+  const salida =
+    item.salida.split(':').map(Number);
+
+  if (
+    entrada.length !== 2 ||
+    salida.length !== 2
+  ) {
+    return 0;
+  }
+
+  const entradaMin =
+    entrada[0] * 60 + entrada[1];
+
+  const salidaMin =
+    salida[0] * 60 + salida[1];
+
+  let diferencia =
+    salidaMin - entradaMin;
+
+  /*
+    Turno nocturno.
+  */
+
+  if (diferencia <= 0) {
+    diferencia += 1440;
+  }
+
+  const descanso =
+    Math.max(
+      0,
+      Number(item.descanso) || 0
+    );
+
+  const minutosNetos =
+    diferencia - descanso;
+
+  if (minutosNetos <= 0) {
+    return 0;
+  }
+
+  return minutosNetos / 60;
+
+}
+
+
+/* ============================================================
+   CÁLCULO DE NÓMINA
+============================================================ */
+
+function calcularPago(totalHoras) {
+
+  /*
+    Overtime solo existe si AMBOS valores están configurados.
+
+    Si cualquiera está en 0:
+    comportamiento normal de la aplicación.
+  */
+
+  const overtimeActivo =
+    overtimeHoras > 0 &&
+    overtimeTarifa > 0;
+
+
+  let horasNormales =
+    totalHoras;
+
+  let horasExtra =
+    0;
+
+
+  if (
+    overtimeActivo &&
+    totalHoras > overtimeHoras
+  ) {
+
+    horasNormales =
+      overtimeHoras;
+
+    horasExtra =
+      totalHoras - overtimeHoras;
+
+  }
+
+
+  const pagoNormal =
+    horasNormales * tarifa;
+
+  const pagoExtra =
+    horasExtra * overtimeTarifa;
+
+  const bruto =
+    pagoNormal + pagoExtra;
+
+  const impuestos =
+    bruto * (
+      taxPorcentaje / 100
+    );
+
+  const deduccion =
+    bruto > 0
+      ? deducFija
+      : 0;
+
+  const neto =
+    Math.max(
+      0,
+      bruto -
+      impuestos -
+      deduccion
+    );
+
+
+  return {
+
+    horasNormales,
+
+    horasExtra,
+
+    pagoNormal,
+
+    pagoExtra,
+
+    bruto,
+
+    impuestos,
+
+    deduccion,
+
+    neto
+
+  };
+
+}
+
+
+/* ============================================================
+   SELECTOR DE SEMANAS
+============================================================ */
+
+function actualizarSelectorSemanas() {
+
+  semanaSelector.innerHTML = '';
+
+  const actual =
+    document.createElement('option');
+
+  actual.value =
+    'actual';
+
+  actual.innerText =
+    `Semana Actual · ${obtenerRangoSemanaActual()}`;
+
+  semanaSelector.appendChild(
+    actual
+  );
+
+
+  semanasArchivadas.forEach(
+    sem => {
+
+      const option =
+        document.createElement('option');
+
+      option.value =
+        sem.id;
+
+      option.innerText =
+        `📦 ${sem.rango} · ${sem.totalHoras}h`;
+
+      semanaSelector.appendChild(
+        option
+      );
+
+    }
+  );
+
+}
+
+
+/* ============================================================
+   RECALCULAR SEMANA
+============================================================ */
+
+function recalcularTotalesSemanaArchivada(sem) {
+
+  if (
+    !sem ||
+    !Array.isArray(sem.datos)
+  ) {
+    return;
+  }
+
+  if (
+    sem.datos.length === 0
+  ) {
+
+    sem.rango =
+      'Vacía';
+
+    sem.totalHoras =
+      '0.00';
+
+    return;
+
+  }
+
+
+  const fechas =
+    sem.datos
+      .map(x => x.fecha)
+      .filter(Boolean)
+      .sort();
+
+
+  if (!fechas.length) {
+
+    sem.rango =
+      'Sin fecha';
+
+    sem.totalHoras =
+      '0.00';
+
+    return;
+
+  }
+
+
+  const formato =
+    f => {
+
+      const [y,m,d] =
+        f.split('-').map(Number);
+
+      return new Date(
+        y,
+        m - 1,
+        d
+      ).toLocaleDateString(
+        'es-MX',
+        {
+          day:'numeric',
+          month:'short'
+        }
+      );
+
+    };
+
+
+  sem.rango =
+    `${formato(fechas[0])} - ${formato(fechas[fechas.length-1])}`;
+
+
+  let total =
+    0;
+
+  sem.datos.forEach(
+    item => {
+      total += calcularTurno(item);
+    }
+  );
+
+
+  sem.totalHoras =
+    total.toFixed(2);
+
+}
+
+
+/* ============================================================
+   RENDER
+============================================================ */
+
+function renderApp() {
+
+  /*
+    Guardamos los datos.
+    Nunca cambiamos su estructura.
+  */
+
+  guardarDatos();
+  guardarConfiguracion();
+
 
   historialLista.innerHTML = '';
 
-  const vista = semanaSelector.value;
+
+  const vista =
+    semanaSelector.value;
+
 
   let datosAMostrar = [];
 
-  if (vista === 'actual') {
 
-    datosAMostrar = [...historial];
+  if (
+    vista === 'actual'
+  ) {
 
-    contenedorRegistro.style.display = 'flex';
-    btnCerrarSemana.style.display = 'inline-block';
+    datosAMostrar =
+      [...historial];
+
+    contenedorRegistro.style.display =
+      'flex';
+
+    btnCerrarSemana.style.display =
+      'inline-block';
 
     tituloHistorial.innerText =
       '📅 Historial de Días';
@@ -1093,29 +1720,48 @@ function renderApp() {
 
     const semana =
       semanasArchivadas.find(
-        s => String(s.id) === String(vista)
+        s =>
+          String(s.id) ===
+          String(vista)
       );
 
     datosAMostrar =
-      semana ? [...semana.datos] : [];
+      semana
+        ? [...semana.datos]
+        : [];
 
-    contenedorRegistro.style.display = 'none';
-    btnCerrarSemana.style.display = 'none';
+    contenedorRegistro.style.display =
+      'none';
+
+    btnCerrarSemana.style.display =
+      'none';
 
     tituloHistorial.innerText =
       '📦 Archivo Histórico';
+
   }
 
+
   /*
-    Ordenar del más reciente al más antiguo.
+    Más reciente primero.
   */
-  datosAMostrar.sort((a, b) =>
-    b.fecha.localeCompare(a.fecha)
+
+  datosAMostrar.sort(
+    (a,b) =>
+      String(b.fecha)
+        .localeCompare(
+          String(a.fecha)
+        )
   );
 
-  let totalHoras = 0;
 
-  if (!datosAMostrar.length) {
+  let totalHoras =
+    0;
+
+
+  if (
+    datosAMostrar.length === 0
+  ) {
 
     historialLista.innerHTML = `
       <div class="bg-zinc-900/30 border border-dashed border-zinc-800/60 rounded-2xl p-6 text-center text-xs text-zinc-600 font-medium">
@@ -1125,157 +1771,227 @@ function renderApp() {
 
   } else {
 
-    datosAMostrar.forEach(item => {
 
-      const horas =
-        calcularTurno(item);
+    datosAMostrar.forEach(
+      item => {
 
-      totalHoras += horas;
+        const horas =
+          calcularTurno(item);
 
-      const pago =
-        calcularPago(horas);
+        totalHoras +=
+          horas;
 
-      const [y, m, d] =
-        item.fecha.split('-').map(Number);
 
-      const dateObj =
-        new Date(y, m - 1, d);
+        const pago =
+          calcularPago(horas);
 
-      const fechaFormato =
-        dateObj.toLocaleDateString('es-MX', {
-          weekday: 'short',
-          day: 'numeric',
-          month: 'short'
-        });
 
-      const originalIndex =
-        vista === 'actual'
-          ? historial.findIndex(x => x.id === item.id)
-          : (() => {
-              const sem =
-                semanasArchivadas.find(
-                  s => String(s.id) === String(vista)
-                );
+        const [y,m,d] =
+          item.fecha
+            .split('-')
+            .map(Number);
 
-              return sem
-                ? sem.datos.findIndex(
-                    x => x.id === item.id
-                  )
-                : -1;
-            })();
 
-      const pagoDia =
-        pago.bruto;
+        const fecha =
+          new Date(
+            y,
+            m - 1,
+            d
+          );
 
-      historialLista.innerHTML += `
-        <div
-          onclick="editarDia(${originalIndex})"
-          class="bg-zinc-900/50 hover:bg-zinc-900/80 border border-zinc-800/80 p-4 rounded-2xl flex items-center justify-between relative overflow-hidden shadow-sm cursor-pointer transition-colors">
 
-          <div class="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500"></div>
+        const fechaTexto =
+          fecha.toLocaleDateString(
+            'es-MX',
+            {
+              weekday:'short',
+              day:'numeric',
+              month:'short'
+            }
+          );
 
-          <div class="pl-2 min-w-0">
 
-            <span class="text-xs font-black text-white capitalize">
-              ${escaparHTML(fechaFormato)}
-            </span>
+        /*
+          Encontramos el ID original.
+          Esto evita que editar/eliminar falle cuando
+          el historial se ordena visualmente.
+        */
 
-            <div class="flex gap-2.5 text-[10px] text-zinc-500 mt-0.5 font-bold flex-wrap">
+        let originalIndex =
+          -1;
 
-              <span>
-                In:
-                <strong class="text-zinc-300">
-                  ${escaparHTML(item.entrada)}
-                </strong>
-              </span>
 
-              <span>
-                Out:
-                <strong class="text-zinc-300">
-                  ${escaparHTML(item.salida)}
-                </strong>
-              </span>
+        if (
+          vista === 'actual'
+        ) {
 
-              <span>
-                Break:
-                <strong class="text-zinc-400">
-                  ${Number(item.descanso) || 0}m
-                </strong>
-              </span>
+          originalIndex =
+            historial.findIndex(
+              x =>
+                x.id === item.id
+            );
 
-            </div>
+        } else {
 
-          </div>
+          const sem =
+            semanasArchivadas.find(
+              s =>
+                String(s.id) ===
+                String(vista)
+            );
+
+          if (sem) {
+
+            originalIndex =
+              sem.datos.findIndex(
+                x =>
+                  x.id === item.id
+              );
+
+          }
+
+        }
+
+
+        historialLista.innerHTML += `
 
           <div
-            class="flex items-center gap-3 ml-2"
-            onclick="event.stopPropagation();">
+            onclick="editarDia(${originalIndex})"
+            class="bg-zinc-900/50 hover:bg-zinc-900/80 border border-zinc-800/80 p-4 rounded-2xl flex items-center justify-between relative overflow-hidden shadow-sm cursor-pointer transition-colors">
 
-            <div class="text-right">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500"></div>
 
-              <span class="text-sm font-black text-zinc-300 block">
-                $${dinero(pagoDia)}
-                <span class="text-[9px] text-zinc-600 font-normal">
-                  bruto
+
+            <div class="pl-2 min-w-0">
+
+              <span class="text-xs font-black text-white capitalize">
+                ${fechaTexto}
+              </span>
+
+
+              <div class="flex gap-2.5 text-[10px] text-zinc-500 mt-0.5 font-bold flex-wrap">
+
+                <span>
+                  In:
+                  <strong class="text-zinc-300">
+                    ${item.entrada}
+                  </strong>
                 </span>
-              </span>
 
-              <span class="text-[10px] text-zinc-500 font-bold block">
-                ${horas.toFixed(2)} hrs
-              </span>
+                <span>
+                  Out:
+                  <strong class="text-zinc-300">
+                    ${item.salida}
+                  </strong>
+                </span>
 
-              ${
-                pago.horasExtra > 0
-                ? `
-                  <span class="text-[9px] text-orange-400 font-bold block">
-                    +${pago.horasExtra.toFixed(2)} extra
-                  </span>
-                `
-                : ''
-              }
+                <span>
+                  Break:
+                  <strong class="text-zinc-400">
+                    ${Number(item.descanso) || 0}m
+                  </strong>
+                </span>
+
+              </div>
 
             </div>
 
-            <button
-              onclick="eliminarDia(${originalIndex})"
-              class="text-zinc-600 hover:text-rose-400 text-xs active:scale-90 transition-transform px-1 font-bold">
-              ✕
-            </button>
+
+            <div
+              class="flex items-center gap-3 ml-2"
+              onclick="event.stopPropagation();">
+
+              <div class="text-right">
+
+                <span class="text-sm font-black text-zinc-300 block">
+
+                  $${dinero(pago.bruto)}
+
+                  <span class="text-[9px] text-zinc-600 font-normal">
+                    bruto
+                  </span>
+
+                </span>
+
+
+                <span class="text-[10px] text-zinc-500 font-bold block">
+
+                  ${horas.toFixed(2)} hrs
+
+                </span>
+
+
+                ${
+                  pago.horasExtra > 0
+                  ? `
+                    <span class="text-[9px] text-orange-400 font-bold block">
+                      +${pago.horasExtra.toFixed(2)} extra
+                    </span>
+                  `
+                  : ''
+                }
+
+              </div>
+
+
+              <button
+                onclick="eliminarDia(${originalIndex})"
+                class="text-zinc-600 hover:text-rose-400 text-xs active:scale-90 transition-transform px-1 font-bold">
+                ✕
+              </button>
+
+            </div>
 
           </div>
 
-        </div>
-      `;
-    });
+        `;
+
+      }
+    );
+
   }
+
+
+  /* ----------------------------------------------------------
+     RESUMEN
+  ---------------------------------------------------------- */
 
   const pagoTotal =
     calcularPago(totalHoras);
 
-  /* RESUMEN */
 
   totalHorasTxt.innerText =
     `${totalHoras.toFixed(2)}h`;
 
+
   totalDineroTxt.innerText =
     `$${dinero(pagoTotal.neto)}`;
+
 
   desgloseHorasNormales.innerText =
     `${pagoTotal.horasNormales.toFixed(2)}h`;
 
+
   desgloseBruto.innerText =
     `$${dinero(pagoTotal.bruto)}`;
+
 
   desgloseImpuestos.innerText =
     `-$${dinero(pagoTotal.impuestos)}`;
 
+
   desgloseTaxPct.innerText =
     taxPorcentaje;
 
-  if (pagoTotal.horasExtra > 0) {
+
+  if (
+    pagoTotal.horasExtra > 0
+  ) {
 
     $('row-horas-extra')
-      .classList.remove('hidden');
+      .classList.remove(
+        'hidden'
+      );
 
     desgloseHorasExtra.innerText =
       `${pagoTotal.horasExtra.toFixed(2)}h`;
@@ -1283,13 +1999,21 @@ function renderApp() {
   } else {
 
     $('row-horas-extra')
-      .classList.add('hidden');
+      .classList.add(
+        'hidden'
+      );
+
   }
 
-  if (pagoTotal.pagoExtra > 0) {
+
+  if (
+    pagoTotal.pagoExtra > 0
+  ) {
 
     desgloseOvertimeRow
-      .classList.remove('hidden');
+      .classList.remove(
+        'hidden'
+      );
 
     desgloseOvertime.innerText =
       `$${dinero(pagoTotal.pagoExtra)}`;
@@ -1297,13 +2021,21 @@ function renderApp() {
   } else {
 
     desgloseOvertimeRow
-      .classList.add('hidden');
+      .classList.add(
+        'hidden'
+      );
+
   }
 
-  if (pagoTotal.deduccion > 0) {
+
+  if (
+    pagoTotal.deduccion > 0
+  ) {
 
     desgloseFijoRow
-      .classList.remove('hidden');
+      .classList.remove(
+        'hidden'
+      );
 
     desgloseFijo.innerText =
       `-$${dinero(pagoTotal.deduccion)}`;
@@ -1311,421 +2043,274 @@ function renderApp() {
   } else {
 
     desgloseFijoRow
-      .classList.add('hidden');
+      .classList.add(
+        'hidden'
+      );
+
   }
+
 }
 
-/* =========================================================
+
+/* ============================================================
    GUARDAR TURNO
-========================================================= */
+============================================================ */
 
-btnGuardar.onclick = () => {
+btnGuardar.onclick =
+  () => {
 
-  if (!fechaInput.value) {
+    if (!fechaInput.value) {
 
-    alert('Selecciona una fecha.');
-    return;
-  }
-
-  if (!entradaInput.value || !salidaInput.value) {
-
-    alert('Pon la hora de Entrada y Salida.');
-    return;
-  }
-
-  const descanso =
-    Math.max(
-      0,
-      parseInt(descansoInput.value) || 0
-    );
-
-  const [eH, eM] =
-    entradaInput.value.split(':').map(Number);
-
-  const [sH, sM] =
-    salidaInput.value.split(':').map(Number);
-
-  let minutos =
-    (sH * 60 + sM) -
-    (eH * 60 + eM);
-
-  if (minutos <= 0) {
-    minutos += 1440;
-  }
-
-  if (descanso >= minutos) {
-
-    alert(
-      'El break no puede ser igual o mayor que la duración del turno.'
-    );
-
-    return;
-  }
-
-  /*
-    Evita duplicar exactamente el mismo día.
-  */
-
-  const duplicado =
-    historial.find(
-      x => x.fecha === fechaInput.value
-    );
-
-  if (duplicado) {
-
-    const continuar =
-      confirm(
-        'Ya existe un registro para esta fecha. ¿Quieres guardar otro turno de todos modos?'
+      alert(
+        'Selecciona una fecha.'
       );
 
-    if (!continuar) {
       return;
+
     }
-  }
 
-  const nuevoTurno = {
 
-    id: Date.now(),
+    if (
+      !entradaInput.value ||
+      !salidaInput.value
+    ) {
 
-    fecha: fechaInput.value,
+      alert(
+        'Pon la hora de Entrada y Salida.'
+      );
 
-    entrada: entradaInput.value,
+      return;
 
-    salida: salidaInput.value,
+    }
 
-    descanso
-  };
 
-  historial.push(nuevoTurno);
+    const descanso =
+      Math.max(
+        0,
+        parseInt(
+          descansoInput.value,
+          10
+        ) || 0
+      );
 
-  saveCurrentInputs();
 
-  btnGuardar.innerText =
-    '✅ ¡Guardado!';
+    const [eH,eM] =
+      entradaInput.value
+        .split(':')
+        .map(Number);
 
-  btnGuardar.style.opacity =
-    '0.7';
 
-  setTimeout(() => {
+    const [sH,sM] =
+      salidaInput.value
+        .split(':')
+        .map(Number);
+
+
+    let minutos =
+      (sH * 60 + sM) -
+      (eH * 60 + eM);
+
+
+    if (minutos <= 0) {
+      minutos += 1440;
+    }
+
+
+    if (
+      descanso >= minutos
+    ) {
+
+      alert(
+        'El break no puede ser igual o mayor que la duración del turno.'
+      );
+
+      return;
+
+    }
+
+
+    /*
+      No eliminamos duplicados automáticamente.
+      Solo avisamos.
+    */
+
+    const duplicado =
+      historial.find(
+        x =>
+          x.fecha ===
+          fechaInput.value
+      );
+
+
+    if (duplicado) {
+
+      const continuar =
+        confirm(
+          'Ya existe un registro para esta fecha. ¿Quieres guardar otro turno de todos modos?'
+        );
+
+      if (!continuar) {
+        return;
+      }
+
+    }
+
+
+    const nuevoTurno = {
+
+      id:
+        Date.now(),
+
+      fecha:
+        fechaInput.value,
+
+      entrada:
+        entradaInput.value,
+
+      salida:
+        salidaInput.value,
+
+      descanso
+
+    };
+
+
+    historial.push(
+      nuevoTurno
+    );
+
+
+    guardarUltimasHoras();
+
+    guardarDatos();
+
 
     btnGuardar.innerText =
-      '📥 Guardar Turno en Historial';
+      '✅ ¡Guardado!';
 
-    btnGuardar.style.opacity =
-      '1';
 
-  }, 1200);
+    setTimeout(
+      () => {
 
-  renderApp();
-};
+        btnGuardar.innerText =
+          '📥 Guardar Turno en Historial';
 
-/* =========================================================
+      },
+      1200
+    );
+
+
+    renderApp();
+
+  };
+
+
+/* ============================================================
    ARCHIVAR SEMANA
-========================================================= */
+============================================================ */
 
-btnCerrarSemana.onclick = () => {
+btnCerrarSemana.onclick =
+  () => {
 
-  if (!historial.length) {
+    if (
+      historial.length === 0
+    ) {
 
-    alert(
-      'No tienes ningún turno registrado para archivar.'
-    );
-
-    return;
-  }
-
-  if (!confirm(
-    '¿Quieres cerrar y archivar la semana actual? Esto limpiará la pantalla principal.'
-  )) {
-    return;
-  }
-
-  const fechas =
-    historial.map(h => h.fecha).sort();
-
-  const formatearF = fStr => {
-
-    const [y, m, d] =
-      fStr.split('-').map(Number);
-
-    return new Date(y, m - 1, d)
-      .toLocaleDateString('es-MX', {
-        day: 'numeric',
-        month: 'short'
-      });
-  };
-
-  const rangoTexto =
-    `${formatearF(fechas[0])} - ${formatearF(fechas[fechas.length - 1])}`;
-
-  let totalH = 0;
-
-  historial.forEach(item => {
-
-    totalH += calcularTurno(item);
-
-  });
-
-  const nuevaSemana = {
-
-    id: Date.now(),
-
-    rango: rangoTexto,
-
-    totalHoras: totalH.toFixed(2),
-
-    datos: JSON.parse(
-      JSON.stringify(historial)
-    )
-
-  };
-
-  semanasArchivadas.unshift(
-    nuevaSemana
-  );
-
-  historial = [];
-
-  localStorage.removeItem(
-    'tt_last_entrada'
-  );
-
-  localStorage.removeItem(
-    'tt_last_salida'
-  );
-
-  entradaInput.value = '';
-  salidaInput.value = '';
-
-  fechaInput.value =
-    obtenerFechaLocalCliente();
-
-  actualizarSelectorSemanas();
-
-  semanaSelector.value =
-    'actual';
-
-  renderApp();
-
-  alert(
-    '📦 Semana guardada correctamente.'
-  );
-};
-
-/* =========================================================
-   ELIMINAR
-========================================================= */
-
-window.eliminarDia = index => {
-
-  if (!confirm(
-    '¿Quieres eliminar este registro?'
-  )) {
-    return;
-  }
-
-  const vista =
-    semanaSelector.value;
-
-  if (vista === 'actual') {
-
-    historial.splice(index, 1);
-
-  } else {
-
-    const idxSem =
-      semanasArchivadas.findIndex(
-        s => String(s.id) === String(vista)
+      alert(
+        'No tienes ningún turno registrado para archivar.'
       );
 
-    if (idxSem !== -1) {
+      return;
 
-      semanasArchivadas[idxSem]
-        .datos
-        .splice(index, 1);
-
-      recalcularTotalesSemanaArchivada(
-        semanasArchivadas[idxSem]
-      );
     }
-  }
 
-  actualizarSelectorSemanas();
 
-  semanaSelector.value =
-    vista;
-
-  renderApp();
-};
-
-/* =========================================================
-   EDITAR
-========================================================= */
-
-window.editarDia = index => {
-
-  const vista =
-    semanaSelector.value;
-
-  let turno = null;
-
-  if (vista === 'actual') {
-
-    turno = historial[index];
-
-  } else {
-
-    const sem =
-      semanasArchivadas.find(
-        s => String(s.id) === String(vista)
-      );
-
-    if (sem) {
-      turno = sem.datos[index];
-    }
-  }
-
-  if (!turno) return;
-
-  indiceEditando = index;
-  vistaEditando = vista;
-
-  editarFecha.value =
-    turno.fecha;
-
-  editarEntrada.value =
-    turno.entrada;
-
-  editarSalida.value =
-    turno.salida;
-
-  editarDescanso.value =
-    turno.descanso;
-
-  modalEditar.classList.remove(
-    'hidden'
-  );
-};
-
-$('btn-cerrar-modal').onclick =
-  () => modalEditar.classList.add('hidden');
-
-$('btn-guardar-edicion').onclick = () => {
-
-  if (!editarFecha.value ||
-      !editarEntrada.value ||
-      !editarSalida.value) {
-
-    alert(
-      'Completa fecha, entrada y salida.'
-    );
-
-    return;
-  }
-
-  const descanso =
-    Math.max(
-      0,
-      parseInt(editarDescanso.value) || 0
-    );
-
-  const [eH, eM] =
-    editarEntrada.value.split(':').map(Number);
-
-  const [sH, sM] =
-    editarSalida.value.split(':').map(Number);
-
-  let minutos =
-    (sH * 60 + sM) -
-    (eH * 60 + eM);
-
-  if (minutos <= 0) {
-    minutos += 1440;
-  }
-
-  if (descanso >= minutos) {
-
-    alert(
-      'El break no puede ser igual o mayor que la duración del turno.'
-    );
-
-    return;
-  }
-
-  let turno;
-
-  if (vistaEditando === 'actual') {
-
-    turno =
-      historial[indiceEditando];
-
-  } else {
-
-    const sem =
-      semanasArchivadas.find(
-        s => String(s.id) === String(vistaEditando)
-      );
-
-    if (sem) {
-      turno =
-        sem.datos[indiceEditando];
-    }
-  }
-
-  if (!turno) return;
-
-  turno.fecha =
-    editarFecha.value;
-
-  turno.entrada =
-    editarEntrada.value;
-
-  turno.salida =
-    editarSalida.value;
-
-  turno.descanso =
-    descanso;
-
-  if (vistaEditando !== 'actual') {
-
-    const sem =
-      semanasArchivadas.find(
-        s => String(s.id) === String(vistaEditando)
-      );
-
-    if (sem) {
-      recalcularTotalesSemanaArchivada(sem);
-    }
-  }
-
-  modalEditar.classList.add('hidden');
-
-  actualizarSelectorSemanas();
-
-  semanaSelector.value =
-    vistaEditando;
-
-  renderApp();
-};
-
-/* =========================================================
-   LIMPIAR
-========================================================= */
-
-btnClearAll.onclick = () => {
-
-  const vista =
-    semanaSelector.value;
-
-  if (vista === 'actual') {
-
-    if (!confirm(
-      '¿De verdad quieres borrar todos los registros de la semana actual?'
-    )) {
+    if (
+      !confirm(
+        '¿Quieres cerrar y archivar la semana actual? Esto limpiará la pantalla principal.'
+      )
+    ) {
       return;
     }
 
+
+    const fechas =
+      historial
+        .map(h => h.fecha)
+        .filter(Boolean)
+        .sort();
+
+
+    const formato =
+      f => {
+
+        const [y,m,d] =
+          f.split('-')
+            .map(Number);
+
+        return new Date(
+          y,
+          m - 1,
+          d
+        ).toLocaleDateString(
+          'es-MX',
+          {
+            day:'numeric',
+            month:'short'
+          }
+        );
+
+      };
+
+
+    let totalH =
+      0;
+
+
+    historial.forEach(
+      item => {
+
+        totalH +=
+          calcularTurno(item);
+
+      }
+    );
+
+
+    const nuevaSemana = {
+
+      id:
+        Date.now(),
+
+      rango:
+        `${formato(fechas[0])} - ${formato(fechas[fechas.length - 1])}`,
+
+      totalHoras:
+        totalH.toFixed(2),
+
+      datos:
+        JSON.parse(
+          JSON.stringify(historial)
+        )
+
+    };
+
+
+    /*
+      Primero agregamos la semana archivada.
+      DESPUÉS limpiamos historial.
+
+      Así evitamos dejar el sistema en un estado
+      intermedio si ocurre un problema.
+    */
+
+    semanasArchivadas.unshift(
+      nuevaSemana
+    );
+
+
     historial = [];
+
 
     localStorage.removeItem(
       'tt_last_entrada'
@@ -1735,361 +2320,997 @@ btnClearAll.onclick = () => {
       'tt_last_salida'
     );
 
-    entradaInput.value = '';
-    salidaInput.value = '';
 
-    renderApp();
+    entradaInput.value =
+      '';
 
-  } else {
+    salidaInput.value =
+      '';
 
-    if (!confirm(
-      '¿Quieres borrar definitivamente esta semana archivada?'
-    )) {
-      return;
-    }
+    fechaInput.value =
+      fechaLocal();
 
-    semanasArchivadas =
-      semanasArchivadas.filter(
-        s => String(s.id) !== String(vista)
-      );
+
+    guardarDatos();
+
 
     actualizarSelectorSemanas();
 
     semanaSelector.value =
       'actual';
 
+
     renderApp();
-  }
-};
 
-/* =========================================================
-   SELECTOR
-========================================================= */
 
-semanaSelector.onchange = () => {
-  renderApp();
-};
-
-/* =========================================================
-   EXPORTAR CSV
-========================================================= */
-
-$('btn-exportar-csv').onclick = () => {
-
-  const filas = [];
-
-  filas.push([
-    'Fecha',
-    'Entrada',
-    'Salida',
-    'Break',
-    'Horas',
-    'Horas Normales',
-    'Horas Extra',
-    'Bruto'
-  ]);
-
-  const agregar = item => {
-
-    const horas =
-      calcularTurno(item);
-
-    const pago =
-      calcularPago(horas);
-
-    filas.push([
-      item.fecha,
-      item.entrada,
-      item.salida,
-      item.descanso,
-      horas.toFixed(2),
-      pago.horasNormales.toFixed(2),
-      pago.horasExtra.toFixed(2),
-      pago.bruto.toFixed(2)
-    ]);
-  };
-
-  historial.forEach(agregar);
-
-  semanasArchivadas.forEach(sem => {
-    sem.datos.forEach(agregar);
-  });
-
-  const csv =
-    filas
-      .map(fila =>
-        fila
-          .map(valor =>
-            `"${String(valor).replaceAll('"', '""')}"`
-          )
-          .join(',')
-      )
-      .join('\n');
-
-  const blob =
-    new Blob(
-      ['\ufeff' + csv],
-      { type: 'text/csv;charset=utf-8;' }
+    alert(
+      '📦 Semana guardada correctamente.'
     );
 
-  const url =
-    URL.createObjectURL(blob);
+  };
 
-  const a =
-    document.createElement('a');
 
-  a.href = url;
-  a.download =
-    `TimeTracker-${obtenerFechaLocalCliente()}.csv`;
+/* ============================================================
+   ELIMINAR
+============================================================ */
 
-  a.click();
+window.eliminarDia =
+  index => {
 
-  URL.revokeObjectURL(url);
-};
+    if (
+      index < 0
+    ) return;
 
-/* =========================================================
-   RESPALDO JSON
-========================================================= */
 
-$('btn-exportar-json').onclick = () => {
+    if (
+      !confirm(
+        '¿Quieres eliminar este registro?'
+      )
+    ) {
+      return;
+    }
 
-  const respaldo = {
 
-    version: 2,
+    const vista =
+      semanaSelector.value;
 
-    fechaRespaldo:
-      new Date().toISOString(),
 
-    historial,
+    if (
+      vista === 'actual'
+    ) {
 
-    semanasArchivadas,
+      if (
+        historial[index]
+      ) {
 
-    configuracion: {
+        historial.splice(
+          index,
+          1
+        );
 
-      tarifa,
+      }
 
-      taxPorcentaje,
+    } else {
 
-      deducFija,
+      const sem =
+        semanasArchivadas.find(
+          s =>
+            String(s.id) ===
+            String(vista)
+        );
 
-      overtimeHoras,
 
-      overtimeTarifa
+      if (
+        sem &&
+        sem.datos[index]
+      ) {
+
+        sem.datos.splice(
+          index,
+          1
+        );
+
+        recalcularTotalesSemanaArchivada(
+          sem
+        );
+
+      }
 
     }
 
+
+    guardarDatos();
+
+    actualizarSelectorSemanas();
+
+    semanaSelector.value =
+      vista;
+
+    renderApp();
+
   };
 
-  const blob =
-    new Blob(
-      [JSON.stringify(respaldo, null, 2)],
-      { type: 'application/json' }
-    );
 
-  const url =
-    URL.createObjectURL(blob);
+/* ============================================================
+   EDITAR
+============================================================ */
 
-  const a =
-    document.createElement('a');
+let indiceEditando =
+  null;
 
-  a.href = url;
+let vistaEditando =
+  null;
 
-  a.download =
-    `TimeTracker-Respaldo-${obtenerFechaLocalCliente()}.json`;
 
-  a.click();
+window.editarDia =
+  index => {
 
-  URL.revokeObjectURL(url);
-};
+    const vista =
+      semanaSelector.value;
 
-/* =========================================================
-   RESTAURAR JSON
-========================================================= */
 
-$('btn-importar-json').onclick = () => {
+    let turno =
+      null;
 
-  $('input-importar-json').click();
 
-};
+    if (
+      vista === 'actual'
+    ) {
 
-$('input-importar-json').onchange = event => {
+      turno =
+        historial[index];
 
-  const archivo =
-    event.target.files[0];
+    } else {
 
-  if (!archivo) return;
-
-  const lector =
-    new FileReader();
-
-  lector.onload = e => {
-
-    try {
-
-      const datos =
-        JSON.parse(e.target.result);
-
-      if (
-        !Array.isArray(datos.historial) ||
-        !Array.isArray(datos.semanasArchivadas)
-      ) {
-
-        throw new Error(
-          'Archivo inválido.'
+      const sem =
+        semanasArchivadas.find(
+          s =>
+            String(s.id) ===
+            String(vista)
         );
+
+      if (sem) {
+
+        turno =
+          sem.datos[index];
+
       }
 
-      if (!confirm(
-        'Restaurar este respaldo reemplazará los datos actuales. ¿Continuar?'
-      )) {
+    }
+
+
+    if (!turno) {
+      return;
+    }
+
+
+    indiceEditando =
+      index;
+
+    vistaEditando =
+      vista;
+
+
+    editarFecha.value =
+      turno.fecha;
+
+    editarEntrada.value =
+      turno.entrada;
+
+    editarSalida.value =
+      turno.salida;
+
+    editarDescanso.value =
+      turno.descanso;
+
+
+    modalEditar.classList.remove(
+      'hidden'
+    );
+
+  };
+
+
+$('btn-cerrar-modal').onclick =
+  () => {
+
+    modalEditar.classList.add(
+      'hidden'
+    );
+
+  };
+
+
+$('btn-guardar-edicion').onclick =
+  () => {
+
+    if (
+      !editarFecha.value ||
+      !editarEntrada.value ||
+      !editarSalida.value
+    ) {
+
+      alert(
+        'Completa fecha, entrada y salida.'
+      );
+
+      return;
+
+    }
+
+
+    const descanso =
+      Math.max(
+        0,
+        parseInt(
+          editarDescanso.value,
+          10
+        ) || 0
+      );
+
+
+    const [eH,eM] =
+      editarEntrada.value
+        .split(':')
+        .map(Number);
+
+
+    const [sH,sM] =
+      editarSalida.value
+        .split(':')
+        .map(Number);
+
+
+    let minutos =
+      (sH * 60 + sM) -
+      (eH * 60 + eM);
+
+
+    if (minutos <= 0) {
+      minutos += 1440;
+    }
+
+
+    if (
+      descanso >= minutos
+    ) {
+
+      alert(
+        'El break no puede ser igual o mayor que la duración del turno.'
+      );
+
+      return;
+
+    }
+
+
+    let turno =
+      null;
+
+
+    if (
+      vistaEditando === 'actual'
+    ) {
+
+      turno =
+        historial[indiceEditando];
+
+    } else {
+
+      const sem =
+        semanasArchivadas.find(
+          s =>
+            String(s.id) ===
+            String(vistaEditando)
+        );
+
+      if (sem) {
+
+        turno =
+          sem.datos[indiceEditando];
+
+      }
+
+    }
+
+
+    if (!turno) {
+      return;
+    }
+
+
+    turno.fecha =
+      editarFecha.value;
+
+    turno.entrada =
+      editarEntrada.value;
+
+    turno.salida =
+      editarSalida.value;
+
+    turno.descanso =
+      descanso;
+
+
+    if (
+      vistaEditando !== 'actual'
+    ) {
+
+      const sem =
+        semanasArchivadas.find(
+          s =>
+            String(s.id) ===
+            String(vistaEditando)
+        );
+
+      if (sem) {
+
+        recalcularTotalesSemanaArchivada(
+          sem
+        );
+
+      }
+
+    }
+
+
+    guardarDatos();
+
+
+    modalEditar.classList.add(
+      'hidden'
+    );
+
+
+    actualizarSelectorSemanas();
+
+    semanaSelector.value =
+      vistaEditando;
+
+
+    renderApp();
+
+  };
+
+
+/* ============================================================
+   CERRAR MODAL AL TOCAR AFUERA
+============================================================ */
+
+modalEditar.addEventListener(
+  'click',
+  e => {
+
+    if (
+      e.target === modalEditar
+    ) {
+
+      modalEditar.classList.add(
+        'hidden'
+      );
+
+    }
+
+  }
+);
+
+
+/* ============================================================
+   LIMPIAR
+============================================================ */
+
+btnClearAll.onclick =
+  () => {
+
+    const vista =
+      semanaSelector.value;
+
+
+    if (
+      vista === 'actual'
+    ) {
+
+      if (
+        !confirm(
+          '¿De verdad quieres borrar todos los registros de la semana actual?'
+        )
+      ) {
         return;
       }
 
+
       historial =
-        datos.historial;
+        [];
 
-      semanasArchivadas =
-        datos.semanasArchivadas;
 
-      if (datos.configuracion) {
+      localStorage.removeItem(
+        'tt_last_entrada'
+      );
 
-        if (
-          typeof datos.configuracion.tarifa ===
-          'number'
-        ) {
-          tarifa =
-            datos.configuracion.tarifa;
-        }
+      localStorage.removeItem(
+        'tt_last_salida'
+      );
 
-        if (
-          typeof datos.configuracion.taxPorcentaje ===
-          'number'
-        ) {
-          taxPorcentaje =
-            datos.configuracion.taxPorcentaje;
-        }
 
-        if (
-          typeof datos.configuracion.deducFija ===
-          'number'
-        ) {
-          deducFija =
-            datos.configuracion.deducFija;
-        }
+      entradaInput.value =
+        '';
 
-        if (
-          typeof datos.configuracion.overtimeHoras ===
-          'number'
-        ) {
-          overtimeHoras =
-            datos.configuracion.overtimeHoras;
-        }
+      salidaInput.value =
+        '';
 
-        if (
-          typeof datos.configuracion.overtimeTarifa ===
-          'number'
-        ) {
-          overtimeTarifa =
-            datos.configuracion.overtimeTarifa;
-        }
 
+      guardarDatos();
+
+      renderApp();
+
+
+    } else {
+
+
+      if (
+        !confirm(
+          '¿Quieres borrar definitivamente esta semana archivada?'
+        )
+      ) {
+        return;
       }
 
-      tarifaInput.value =
-        tarifa;
 
-      tarifaConfigInput.value =
-        tarifa;
+      semanasArchivadas =
+        semanasArchivadas.filter(
+          s =>
+            String(s.id) !==
+            String(vista)
+        );
 
-      taxPorcentajeInput.value =
-        taxPorcentaje;
 
-      deducFijaInput.value =
-        deducFija;
+      guardarDatos();
 
-      overtimeHorasInput.value =
-        overtimeHoras;
-
-      overtimeTarifaInput.value =
-        overtimeTarifa;
-
-      guardarConfiguracion();
 
       actualizarSelectorSemanas();
 
       semanaSelector.value =
         'actual';
 
+
       renderApp();
 
-      alert(
-        '✅ Datos restaurados correctamente.'
-      );
-
-    } catch (error) {
-
-      alert(
-        '❌ El archivo no es un respaldo válido de TimeTracker.'
-      );
     }
-
-    event.target.value = '';
 
   };
 
-  lector.readAsText(archivo);
-};
 
-/* =========================================================
-   RESTABLECER CONFIGURACIÓN
-========================================================= */
+/* ============================================================
+   SELECTOR
+============================================================ */
 
-$('btn-reset-config').onclick = () => {
+semanaSelector.onchange =
+  () => {
 
-  if (!confirm(
-    '¿Quieres poner las configuraciones en cero? Los registros NO se borrarán.'
-  )) {
-    return;
-  }
+    renderApp();
 
-  tarifa = 0;
-  overtimeHoras = 0;
-  overtimeTarifa = 0;
-  taxPorcentaje = 0;
-  deducFija = 0;
+  };
 
-  tarifaInput.value = 0;
-  tarifaConfigInput.value = 0;
-  overtimeHorasInput.value = 0;
-  overtimeTarifaInput.value = 0;
-  taxPorcentajeInput.value = 0;
-  deducFijaInput.value = 0;
 
-  guardarConfiguracion();
+/* ============================================================
+   EXPORTAR CSV
+============================================================ */
 
-  renderApp();
-};
+$('btn-exportar-csv').onclick =
+  () => {
 
-/* =========================================================
-   CERRAR MODAL HACIENDO CLICK AFUERA
-========================================================= */
+    const filas = [
 
-modalEditar.addEventListener(
-  'click',
-  e => {
+      [
+        'Fecha',
+        'Entrada',
+        'Salida',
+        'Break',
+        'Horas',
+        'Horas normales',
+        'Horas extra',
+        'Bruto'
+      ]
 
-    if (e.target === modalEditar) {
-      modalEditar.classList.add('hidden');
+    ];
+
+
+    const agregar =
+      item => {
+
+        const horas =
+          calcularTurno(item);
+
+        const pago =
+          calcularPago(horas);
+
+
+        filas.push([
+
+          item.fecha,
+
+          item.entrada,
+
+          item.salida,
+
+          item.descanso,
+
+          horas.toFixed(2),
+
+          pago.horasNormales
+            .toFixed(2),
+
+          pago.horasExtra
+            .toFixed(2),
+
+          pago.bruto
+            .toFixed(2)
+
+        ]);
+
+      };
+
+
+    historial.forEach(
+      agregar
+    );
+
+
+    semanasArchivadas.forEach(
+      sem => {
+
+        if (
+          Array.isArray(sem.datos)
+        ) {
+
+          sem.datos.forEach(
+            agregar
+          );
+
+        }
+
+      }
+    );
+
+
+    const csv =
+      filas
+        .map(
+          fila =>
+            fila
+              .map(
+                valor =>
+                  `"${String(valor)
+                    .replaceAll('"','""')}"`
+              )
+              .join(',')
+        )
+        .join('\n');
+
+
+    const blob =
+      new Blob(
+        [
+          '\ufeff' + csv
+        ],
+        {
+          type:
+            'text/csv;charset=utf-8;'
+        }
+      );
+
+
+    const url =
+      URL.createObjectURL(
+        blob
+      );
+
+
+    const a =
+      document.createElement(
+        'a'
+      );
+
+
+    a.href =
+      url;
+
+    a.download =
+      `TimeTracker-${fechaLocal()}.csv`;
+
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+
+    URL.revokeObjectURL(url);
+
+  };
+
+
+/* ============================================================
+   RESPALDO JSON
+============================================================ */
+
+$('btn-exportar-json').onclick =
+  () => {
+
+    const respaldo = {
+
+      version:
+        4,
+
+      fechaRespaldo:
+        new Date().toISOString(),
+
+      historial:
+        historial,
+
+      semanasArchivadas:
+        semanasArchivadas,
+
+      configuracion: {
+
+        tarifa:
+          tarifa,
+
+        taxPorcentaje:
+          taxPorcentaje,
+
+        deducFija:
+          deducFija,
+
+        overtimeHoras:
+          overtimeHoras,
+
+        overtimeTarifa:
+          overtimeTarifa
+
+      }
+
+    };
+
+
+    const blob =
+      new Blob(
+        [
+          JSON.stringify(
+            respaldo,
+            null,
+            2
+          )
+        ],
+        {
+          type:
+            'application/json'
+        }
+      );
+
+
+    const url =
+      URL.createObjectURL(
+        blob
+      );
+
+
+    const a =
+      document.createElement(
+        'a'
+      );
+
+
+    a.href =
+      url;
+
+    a.download =
+      `TimeTracker-Respaldo-${fechaLocal()}.json`;
+
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+
+    URL.revokeObjectURL(url);
+
+  };
+
+
+/* ============================================================
+   RESTAURAR RESPALDO
+============================================================ */
+
+$('btn-importar-json').onclick =
+  () => {
+
+    $('input-importar-json').click();
+
+  };
+
+
+$('input-importar-json').onchange =
+  event => {
+
+    const archivo =
+      event.target.files[0];
+
+
+    if (!archivo) {
+      return;
     }
 
-  }
-);
 
-/* =========================================================
+    const lector =
+      new FileReader();
+
+
+    lector.onload =
+      e => {
+
+        try {
+
+          const datos =
+            JSON.parse(
+              e.target.result
+            );
+
+
+          if (
+            !Array.isArray(
+              datos.historial
+            ) ||
+            !Array.isArray(
+              datos.semanasArchivadas
+            )
+          ) {
+
+            throw new Error(
+              'Formato inválido'
+            );
+
+          }
+
+
+          if (
+            !confirm(
+              'Este respaldo reemplazará los datos actuales. ¿Continuar?'
+            )
+          ) {
+            return;
+          }
+
+
+          /*
+            Creamos respaldo de lo actual
+            ANTES de restaurar.
+          */
+
+          localStorage.setItem(
+            'tt_before_import_backup',
+            JSON.stringify({
+
+              historial,
+
+              semanasArchivadas,
+
+              tarifa,
+
+              taxPorcentaje,
+
+              deducFija,
+
+              overtimeHoras,
+
+              overtimeTarifa
+
+            })
+          );
+
+
+          historial =
+            datos.historial;
+
+          semanasArchivadas =
+            datos.semanasArchivadas;
+
+
+          if (
+            datos.configuracion
+          ) {
+
+            if (
+              typeof datos.configuracion.tarifa ===
+              'number'
+            ) {
+
+              tarifa =
+                datos.configuracion.tarifa;
+
+            }
+
+
+            if (
+              typeof datos.configuracion.taxPorcentaje ===
+              'number'
+            ) {
+
+              taxPorcentaje =
+                datos.configuracion.taxPorcentaje;
+
+            }
+
+
+            if (
+              typeof datos.configuracion.deducFija ===
+              'number'
+            ) {
+
+              deducFija =
+                datos.configuracion.deducFija;
+
+            }
+
+
+            if (
+              typeof datos.configuracion.overtimeHoras ===
+              'number'
+            ) {
+
+              overtimeHoras =
+                datos.configuracion.overtimeHoras;
+
+            }
+
+
+            if (
+              typeof datos.configuracion.overtimeTarifa ===
+              'number'
+            ) {
+
+              overtimeTarifa =
+                datos.configuracion.overtimeTarifa;
+
+            }
+
+          }
+
+
+          guardarDatos();
+
+          guardarConfiguracion();
+
+
+          tarifaInput.value =
+            tarifa;
+
+          tarifaConfigInput.value =
+            tarifa;
+
+          taxPorcentajeInput.value =
+            taxPorcentaje;
+
+          deducFijaInput.value =
+            deducFija;
+
+          overtimeHorasInput.value =
+            overtimeHoras;
+
+          overtimeTarifaInput.value =
+            overtimeTarifa;
+
+
+          actualizarSelectorSemanas();
+
+          semanaSelector.value =
+            'actual';
+
+
+          renderApp();
+
+
+          alert(
+            '✅ Respaldo restaurado correctamente.'
+          );
+
+
+        } catch(error) {
+
+          alert(
+            '❌ El archivo no es un respaldo válido de TimeTracker.'
+          );
+
+        }
+
+
+        event.target.value =
+          '';
+
+      };
+
+
+    lector.readAsText(
+      archivo
+    );
+
+  };
+
+
+/* ============================================================
+   RESTABLECER CONFIGURACIÓN
+   ============================================================
+
+   IMPORTANTE:
+   Esto NO borra registros.
+   Solo pone las configuraciones en cero.
+============================================================ */
+
+$('btn-reset-config').onclick =
+  () => {
+
+    if (
+      !confirm(
+        'Esto pondrá las configuraciones en cero, pero NO borrará tus registros. ¿Continuar?'
+      )
+    ) {
+      return;
+    }
+
+
+    tarifa =
+      0;
+
+    overtimeHoras =
+      0;
+
+    overtimeTarifa =
+      0;
+
+    taxPorcentaje =
+      0;
+
+    deducFija =
+      0;
+
+
+    tarifaInput.value =
+      0;
+
+    tarifaConfigInput.value =
+      0;
+
+    overtimeHorasInput.value =
+      0;
+
+    overtimeTarifaInput.value =
+      0;
+
+    taxPorcentajeInput.value =
+      0;
+
+    deducFijaInput.value =
+      0;
+
+
+    guardarConfiguracion();
+
+    renderApp();
+
+  };
+
+
+/* ============================================================
    INICIO
-========================================================= */
+============================================================ */
 
 actualizarSelectorSemanas();
+
+semanaSelector.value =
+  'actual';
 
 renderApp();
 
