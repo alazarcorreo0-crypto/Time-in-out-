@@ -2,39 +2,72 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#09090b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TimeTracker">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="description" content="Control de horas y nómina personal">
   <title>TimeTracker Pro</title>
+
+  <!-- Manifest dinámico se inyecta por JS -->
+  <link rel="manifest" id="manifest-link">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%234f46e5'/%3E%3Ctext x='90' y='115' font-size='80' text-anchor='middle' fill='white'%3E⚡%3C/text%3E%3C/svg%3E">
 
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
+    :root {
+      --safe-top: env(safe-area-inset-top);
+      --safe-bottom: env(safe-area-inset-bottom);
+    }
+
+    body {
+      padding-top: var(--safe-top);
+      padding-bottom: var(--safe-bottom);
+    }
+
     input[type="number"] {
       appearance: textfield;
       -webkit-appearance: none;
     }
+
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
       -webkit-appearance: none;
       margin: 0;
     }
+
     input::placeholder {
       color: #52525b;
     }
-    /* Suavizado de transiciones */
-    .fade-in {
-      animation: fadeIn 0.25s ease-out;
+
+    /* Scroll suave y mejor en móviles */
+    #historial-lista {
+      -webkit-overflow-scrolling: touch;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
+
+    /* Animación suave para paneles */
+    .panel-enter {
+      animation: slideDown 0.25s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mejor feedback táctil */
+    button:active {
+      transform: scale(0.97);
     }
   </style>
 </head>
 
 <body class="bg-zinc-950 text-zinc-100 font-sans min-h-screen flex justify-center p-4 selection:bg-indigo-500/30">
 
-<div id="app" class="w-full max-w-md flex flex-col gap-5 pt-6 pb-24">
+<div id="app" class="w-full max-w-md flex flex-col gap-5 pt-4 pb-28">
 
   <!-- HEADER -->
   <div class="flex items-center justify-between mb-1">
@@ -51,21 +84,33 @@
       <button
         type="button"
         id="btn-config"
-        class="w-10 h-10 rounded-2xl flex items-center justify-center bg-zinc-900 border border-zinc-800 text-zinc-400 font-bold active:scale-90 transition-transform text-lg shadow-md"
-        title="Configuración">
+        class="w-11 h-11 rounded-2xl flex items-center justify-center bg-zinc-900 border border-zinc-800 text-zinc-400 font-bold active:scale-90 transition-transform text-lg shadow-md"
+        aria-label="Configuración">
         ⚙️
       </button>
-      <div class="w-10 h-10 rounded-2xl flex items-center justify-center bg-gradient-to-tr from-indigo-600 to-violet-500 shadow-lg shadow-indigo-500/20">
+
+      <div class="w-11 h-11 rounded-2xl flex items-center justify-center bg-gradient-to-tr from-indigo-600 to-violet-500 shadow-lg shadow-indigo-500/25">
         <span class="text-white text-lg font-bold">⚡</span>
       </div>
     </div>
   </div>
 
 
+  <!-- BANNER PWA (solo se muestra si se puede instalar) -->
+  <div id="pwa-install-banner" class="hidden bg-indigo-600/20 border border-indigo-500/40 rounded-2xl p-3 flex items-center justify-between gap-3">
+    <div class="text-xs text-indigo-200 font-medium">
+      📲 Instala TimeTracker como app
+    </div>
+    <button id="btn-install-pwa" class="px-3 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded-xl active:scale-95">
+      Instalar
+    </button>
+  </div>
+
+
   <!-- CONFIGURACIÓN -->
   <div
     id="panel-config"
-    class="hidden bg-zinc-900/90 border border-indigo-500/40 p-5 rounded-3xl flex flex-col gap-4 shadow-2xl fade-in">
+    class="hidden bg-zinc-900/95 border border-indigo-500/40 p-5 rounded-3xl flex flex-col gap-4 shadow-2xl panel-enter">
 
     <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
       <h3 class="text-xs font-black uppercase tracking-wider text-indigo-400">
@@ -74,7 +119,7 @@
       <button
         type="button"
         id="btn-cerrar-config"
-        class="text-zinc-500 hover:text-white font-bold text-xs">
+        class="text-zinc-500 hover:text-white font-bold text-xs px-2 py-1">
         ✕ Cerrar
       </button>
     </div>
@@ -84,7 +129,7 @@
       <label class="block text-[10px] font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">
         Tarifa normal
       </label>
-      <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2">
+      <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5">
         <span class="text-zinc-500 text-xs font-bold">$</span>
         <input
           type="number"
@@ -107,9 +152,9 @@
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="block text-[10px] font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">
-            Overtime después de
+            Después de
           </label>
-          <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2">
+          <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5">
             <input
               type="number"
               inputmode="decimal"
@@ -124,9 +169,9 @@
         </div>
         <div>
           <label class="block text-[10px] font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">
-            Tarifa overtime
+            Tarifa OT
           </label>
-          <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2">
+          <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5">
             <span class="text-zinc-500 text-xs font-bold">$</span>
             <input
               type="number"
@@ -148,7 +193,7 @@
         <label class="block text-[10px] font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">
           Impuestos
         </label>
-        <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2">
+        <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5">
           <input
             type="number"
             inputmode="decimal"
@@ -166,7 +211,7 @@
         <label class="block text-[10px] font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">
           Deducción fija
         </label>
-        <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-xl px-2 py-2">
+        <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-xl px-2 py-2.5">
           <span class="text-zinc-500 text-xs font-bold pl-1">$</span>
           <input
             type="number"
@@ -185,36 +230,24 @@
     <div class="border-t border-zinc-800 pt-4">
       <p class="text-xs font-black text-white mb-3">🧰 Herramientas</p>
       <div class="grid grid-cols-2 gap-2">
-        <button
-          type="button"
-          id="btn-exportar-csv"
+        <button type="button" id="btn-exportar-csv"
           class="py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-bold text-zinc-300 active:scale-95">
           📊 Exportar CSV
         </button>
-        <button
-          type="button"
-          id="btn-exportar-json"
+        <button type="button" id="btn-exportar-json"
           class="py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-bold text-zinc-300 active:scale-95">
-          💾 Respaldar datos
+          💾 Respaldar
         </button>
-        <button
-          type="button"
-          id="btn-importar-json"
+        <button type="button" id="btn-importar-json"
           class="py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-bold text-zinc-300 active:scale-95">
           📥 Restaurar
         </button>
-        <button
-          type="button"
-          id="btn-reset-config"
+        <button type="button" id="btn-reset-config"
           class="py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-bold text-rose-400 active:scale-95">
-          ♻️ Configuración
+          ♻️ Config
         </button>
       </div>
-      <input
-        type="file"
-        id="input-importar-json"
-        accept=".json,application/json"
-        class="hidden">
+      <input type="file" id="input-importar-json" accept=".json,application/json" class="hidden">
     </div>
   </div>
 
@@ -236,20 +269,12 @@
   <!-- RESUMEN -->
   <div class="grid grid-cols-2 gap-3">
     <div class="bg-zinc-900/60 border border-zinc-800/80 p-4 rounded-2xl shadow-xl">
-      <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
-        ⏱️ Horas Totales
-      </span>
-      <span id="total-horas-txt" class="text-2xl font-black text-white mt-1 block">
-        0.00h
-      </span>
+      <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-500">⏱️ Horas Totales</span>
+      <span id="total-horas-txt" class="text-2xl font-black text-white mt-1 block">0.00h</span>
     </div>
     <div class="bg-zinc-900/60 border border-zinc-800/80 p-4 rounded-2xl shadow-xl">
-      <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-500">
-        💵 Total Neto Est.
-      </span>
-      <span id="total-dinero-txt" class="text-2xl font-black text-emerald-400 mt-1 block">
-        $0.00
-      </span>
+      <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-500">💵 Total Neto Est.</span>
+      <span id="total-dinero-txt" class="text-2xl font-black text-emerald-400 mt-1 block">$0.00</span>
     </div>
   </div>
 
@@ -303,18 +328,11 @@
 
 
   <!-- NUEVO REGISTRO -->
-  <div
-    id="contenedor-registro"
-    class="bg-zinc-900/60 border border-zinc-800/80 p-5 rounded-3xl flex flex-col gap-4 shadow-xl">
-
-    <h2 class="text-sm font-bold text-white tracking-wide">
-      Nuevo Registro Diario
-    </h2>
+  <div id="contenedor-registro" class="bg-zinc-900/60 border border-zinc-800/80 p-5 rounded-3xl flex flex-col gap-4 shadow-xl">
+    <h2 class="text-sm font-bold text-white tracking-wide">Nuevo Registro Diario</h2>
 
     <div>
-      <label class="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">
-        Fecha
-      </label>
+      <label class="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">Fecha</label>
       <input
         type="date"
         id="fecha-input"
@@ -324,18 +342,14 @@
 
     <div class="grid grid-cols-2 gap-3">
       <div>
-        <label class="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">
-          🛫 Entrada
-        </label>
+        <label class="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">🛫 Entrada</label>
         <div class="flex gap-1 bg-zinc-950 border border-zinc-800 rounded-xl p-1">
           <input
             type="time"
             id="entrada-input"
             class="w-full bg-transparent p-2 text-center text-sm font-bold text-white outline-none"
             style="color-scheme: dark;">
-          <button
-            type="button"
-            id="btn-now-entrada"
+          <button type="button" id="btn-now-entrada"
             class="bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 font-bold px-2.5 rounded-lg active:scale-90 text-xs"
             title="Hora actual">
             ▶️
@@ -343,18 +357,14 @@
         </div>
       </div>
       <div>
-        <label class="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">
-          🛬 Salida
-        </label>
+        <label class="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">🛬 Salida</label>
         <div class="flex gap-1 bg-zinc-950 border border-zinc-800 rounded-xl p-1">
           <input
             type="time"
             id="salida-input"
             class="w-full bg-transparent p-2 text-center text-sm font-bold text-white outline-none"
             style="color-scheme: dark;">
-          <button
-            type="button"
-            id="btn-now-salida"
+          <button type="button" id="btn-now-salida"
             class="bg-rose-600/20 border border-rose-500/30 text-rose-400 font-bold px-2.5 rounded-lg active:scale-90 text-xs"
             title="Hora actual">
             ⏹️
@@ -364,9 +374,7 @@
     </div>
 
     <div>
-      <label class="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">
-        ☕ Descanso / Break
-      </label>
+      <label class="block text-[11px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">☕ Descanso / Break</label>
       <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5">
         <input
           type="number"
@@ -397,43 +405,31 @@
         📅 Historial de Días
       </h2>
       <div class="flex gap-3">
-        <button
-          type="button"
-          id="btn-cerrar-semana"
-          class="text-[11px] font-bold text-indigo-400">
+        <button type="button" id="btn-cerrar-semana" class="text-[11px] font-bold text-indigo-400">
           📦 Archivar Semana
         </button>
-        <button
-          type="button"
-          id="btn-clear-all"
-          class="text-[11px] font-medium text-rose-400">
+        <button type="button" id="btn-clear-all" class="text-[11px] font-medium text-rose-400">
           🗑️ Limpiar
         </button>
       </div>
     </div>
     <div id="historial-lista" class="flex flex-col gap-2"></div>
   </div>
-
 </div>
 
 
 <!-- MODAL EDITAR -->
-<div
-  id="modal-editar"
-  class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
-
-  <div class="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-5 shadow-2xl fade-in">
+<div id="modal-editar" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+  <div class="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-5 shadow-2xl panel-enter">
     <div class="flex items-center justify-between mb-5">
       <h3 class="text-sm font-black text-white">✏️ Editar turno</h3>
-      <button type="button" id="btn-cerrar-modal" class="text-zinc-500 font-bold">✕</button>
+      <button type="button" id="btn-cerrar-modal" class="text-zinc-500 font-bold text-lg px-2">✕</button>
     </div>
 
     <div class="flex flex-col gap-4">
       <div>
         <label class="text-[10px] uppercase font-bold text-zinc-500">Fecha</label>
-        <input
-          type="date"
-          id="editar-fecha"
+        <input type="date" id="editar-fecha"
           class="w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-white"
           style="color-scheme: dark;">
       </div>
@@ -441,17 +437,13 @@
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="text-[10px] uppercase font-bold text-zinc-500">Entrada</label>
-          <input
-            type="time"
-            id="editar-entrada"
+          <input type="time" id="editar-entrada"
             class="w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-white"
             style="color-scheme: dark;">
         </div>
         <div>
           <label class="text-[10px] uppercase font-bold text-zinc-500">Salida</label>
-          <input
-            type="time"
-            id="editar-salida"
+          <input type="time" id="editar-salida"
             class="w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-white"
             style="color-scheme: dark;">
         </div>
@@ -459,20 +451,12 @@
 
       <div>
         <label class="text-[10px] uppercase font-bold text-zinc-500">Break (minutos)</label>
-        <input
-          type="number"
-          inputmode="numeric"
-          pattern="[0-9]*"
-          id="editar-descanso"
-          min="0"
-          step="1"
+        <input type="number" inputmode="numeric" pattern="[0-9]*" id="editar-descanso" min="0" step="1"
           class="w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-white">
       </div>
 
-      <button
-        type="button"
-        id="btn-guardar-edicion"
-        class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-sm font-black">
+      <button type="button" id="btn-guardar-edicion"
+        class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-sm font-black active:scale-[0.98]">
         Guardar cambios
       </button>
     </div>
@@ -482,8 +466,8 @@
 
 <script>
 /* ============================================================
-   TIME TRACKER PRO  –  VERSIÓN CORREGIDA Y MEJORADA
-   Compatible 100 % con datos de usuarios existentes
+   TIME TRACKER PRO - PWA + Mejoras
+   Versión segura que conserva todos los datos existentes
    ============================================================ */
 
 const $ = id => document.getElementById(id);
@@ -508,55 +492,51 @@ const dinero = valor => {
 /* ------------------------------------------------------------
    ELEMENTOS
 ------------------------------------------------------------ */
-const tarifaInput          = $('tarifa-input');
-const tarifaConfigInput    = $('tarifa-config-input');
-const fechaInput           = $('fecha-input');
-const entradaInput         = $('entrada-input');
-const salidaInput          = $('salida-input');
-const descansoInput        = $('descanso-input');
-const btnGuardar           = $('btn-guardar');
-const btnClearAll          = $('btn-clear-all');
-const btnCerrarSemana      = $('btn-cerrar-semana');
-const historialLista       = $('historial-lista');
-const semanaSelector       = $('semana-selector');
-const contenedorRegistro   = $('contenedor-registro');
-const tituloHistorial      = $('titulo-historial');
-const btnConfig            = $('btn-config');
-const btnCerrarConfig      = $('btn-cerrar-config');
-const panelConfig          = $('panel-config');
-const overtimeHorasInput   = $('overtime-horas-input');
-const overtimeTarifaInput  = $('overtime-tarifa-input');
-const taxPorcentajeInput   = $('tax-porcentaje-input');
-const deducFijaInput       = $('deduc-fija-input');
-const totalHorasTxt        = $('total-horas-txt');
-const totalDineroTxt       = $('total-dinero-txt');
-const desgloseHorasNormales= $('desglose-horas-normales');
-const desgloseHorasExtra   = $('desglose-horas-extra');
-const desgloseBruto        = $('desglose-bruto');
-const desgloseImpuestos    = $('desglose-impuestos');
-const desgloseTaxPct       = $('desglose-tax-pct');
-const desgloseFijoRow      = $('desglose-fijo-row');
-const desgloseFijo         = $('desglose-fijo');
-const desgloseOvertimeRow  = $('desglose-overtime-row');
-const desgloseOvertime     = $('desglose-overtime');
-const rangoSemanaActual    = $('rango-semana-actual');
-const modalEditar          = $('modal-editar');
-const editarFecha          = $('editar-fecha');
-const editarEntrada        = $('editar-entrada');
-const editarSalida         = $('editar-salida');
-const editarDescanso       = $('editar-descanso');
+const tarifaInput = $('tarifa-input');
+const tarifaConfigInput = $('tarifa-config-input');
+const fechaInput = $('fecha-input');
+const entradaInput = $('entrada-input');
+const salidaInput = $('salida-input');
+const descansoInput = $('descanso-input');
+const btnGuardar = $('btn-guardar');
+const btnClearAll = $('btn-clear-all');
+const btnCerrarSemana = $('btn-cerrar-semana');
+const historialLista = $('historial-lista');
+const semanaSelector = $('semana-selector');
+const contenedorRegistro = $('contenedor-registro');
+const tituloHistorial = $('titulo-historial');
+const btnConfig = $('btn-config');
+const btnCerrarConfig = $('btn-cerrar-config');
+const panelConfig = $('panel-config');
+const overtimeHorasInput = $('overtime-horas-input');
+const overtimeTarifaInput = $('overtime-tarifa-input');
+const taxPorcentajeInput = $('tax-porcentaje-input');
+const deducFijaInput = $('deduc-fija-input');
+const totalHorasTxt = $('total-horas-txt');
+const totalDineroTxt = $('total-dinero-txt');
+const desgloseHorasNormales = $('desglose-horas-normales');
+const desgloseHorasExtra = $('desglose-horas-extra');
+const desgloseBruto = $('desglose-bruto');
+const desgloseImpuestos = $('desglose-impuestos');
+const desgloseTaxPct = $('desglose-tax-pct');
+const desgloseFijoRow = $('desglose-fijo-row');
+const desgloseFijo = $('desglose-fijo');
+const desgloseOvertimeRow = $('desglose-overtime-row');
+const desgloseOvertime = $('desglose-overtime');
+const rangoSemanaActual = $('rango-semana-actual');
+const modalEditar = $('modal-editar');
+const editarFecha = $('editar-fecha');
+const editarEntrada = $('editar-entrada');
+const editarSalida = $('editar-salida');
+const editarDescanso = $('editar-descanso');
 
 /* ============================================================
-   PROTECCIÓN DE DATOS EXISTENTES
-   ============================================================ */
+   PROTECCIÓN DE DATOS EXISTENTES (no se tocan las claves)
+============================================================ */
 const CLAVES_PROTEGIDAS = [
-  'tt_data',
-  'tt_semanas',
-  'tt_tarifa',
-  'tt_tax_pct',
-  'tt_deduc_fija',
-  'tt_last_entrada',
-  'tt_last_salida'
+  'tt_data', 'tt_semanas', 'tt_tarifa', 'tt_tax_pct',
+  'tt_deduc_fija', 'tt_last_entrada', 'tt_last_salida',
+  'tt_overtime_horas', 'tt_overtime_tarifa'
 ];
 
 function crearRespaldoInterno() {
@@ -578,8 +558,8 @@ function crearRespaldoInterno() {
     respaldo.fecha = new Date().toISOString();
     try {
       localStorage.setItem('tt_internal_backup_v4', JSON.stringify(respaldo));
-    } catch (error) {
-      console.warn('No fue posible crear respaldo interno:', error);
+    } catch (e) {
+      console.warn('No fue posible crear respaldo interno:', e);
     }
   }
 }
@@ -587,25 +567,19 @@ function crearRespaldoInterno() {
 crearRespaldoInterno();
 
 /* ============================================================
-   CARGA SEGURA DE DATOS
-   ============================================================ */
+   CARGA SEGURA
+============================================================ */
 function leerJSON(clave, defecto) {
   const valor = localStorage.getItem(clave);
   if (valor === null) return defecto;
   try {
     return JSON.parse(valor);
-  } catch (error) {
-    console.error(`Error leyendo ${clave}`, error);
+  } catch (e) {
+    console.error(`Error leyendo ${clave}`, e);
     return defecto;
   }
 }
 
-let historial          = leerJSON('tt_data', []);
-let semanasArchivadas  = leerJSON('tt_semanas', []);
-
-/* ============================================================
-   CONFIGURACIÓN (conserva valores existentes)
-   ============================================================ */
 function leerNumeroSeguro(clave) {
   const valor = localStorage.getItem(clave);
   if (valor === null) return 0;
@@ -613,30 +587,32 @@ function leerNumeroSeguro(clave) {
   return Number.isFinite(numero) ? numero : 0;
 }
 
-let tarifa          = leerNumeroSeguro('tt_tarifa');
-let taxPorcentaje   = leerNumeroSeguro('tt_tax_pct');
-let deducFija       = leerNumeroSeguro('tt_deduc_fija');
-let overtimeHoras   = leerNumeroSeguro('tt_overtime_horas');
-let overtimeTarifa  = leerNumeroSeguro('tt_overtime_tarifa');
+let historial = leerJSON('tt_data', []);
+let semanasArchivadas = leerJSON('tt_semanas', []);
+
+let tarifa = leerNumeroSeguro('tt_tarifa');
+let taxPorcentaje = leerNumeroSeguro('tt_tax_pct');
+let deducFija = leerNumeroSeguro('tt_deduc_fija');
+let overtimeHoras = leerNumeroSeguro('tt_overtime_horas');
+let overtimeTarifa = leerNumeroSeguro('tt_overtime_tarifa');
 
 /* ============================================================
-   VALORES VISUALES INICIALES
-   ============================================================ */
-fechaInput.value           = fechaLocal();
-tarifaInput.value          = tarifa;
-tarifaConfigInput.value    = tarifa;
-taxPorcentajeInput.value   = taxPorcentaje;
-deducFijaInput.value       = deducFija;
-overtimeHorasInput.value   = overtimeHoras;
-overtimeTarifaInput.value  = overtimeTarifa;
+   VALORES INICIALES
+============================================================ */
+fechaInput.value = fechaLocal();
+tarifaInput.value = tarifa;
+tarifaConfigInput.value = tarifa;
+taxPorcentajeInput.value = taxPorcentaje;
+deducFijaInput.value = deducFija;
+overtimeHorasInput.value = overtimeHoras;
+overtimeTarifaInput.value = overtimeTarifa;
 
-// Conservamos últimas horas solo si existen (para no forzar valores viejos)
 entradaInput.value = localStorage.getItem('tt_last_entrada') || '';
-salidaInput.value  = localStorage.getItem('tt_last_salida')  || '';
+salidaInput.value = localStorage.getItem('tt_last_salida') || '';
 
 /* ============================================================
    GUARDADO SEGURO
-   ============================================================ */
+============================================================ */
 function guardarConfiguracion() {
   localStorage.setItem('tt_tarifa', String(tarifa));
   localStorage.setItem('tt_tax_pct', String(taxPorcentaje));
@@ -651,40 +627,36 @@ function guardarDatos() {
 }
 
 function guardarUltimasHoras() {
-  localStorage.setItem('tt_last_entrada', entradaInput.value);
-  localStorage.setItem('tt_last_salida', salidaInput.value);
+  // Solo guardamos si hay valor, para no sobreescribir con vacío innecesariamente
+  if (entradaInput.value) localStorage.setItem('tt_last_entrada', entradaInput.value);
+  if (salidaInput.value) localStorage.setItem('tt_last_salida', salidaInput.value);
 }
 
 /* ============================================================
-   SEMANA DOMINGO → SÁBADO
-   ============================================================ */
+   SEMANA (domingo → sábado)
+============================================================ */
 function obtenerRangoSemanaActual() {
   const ahora = new Date();
-  const dia = ahora.getDay();
+  const dia = ahora.getDay(); // 0 = domingo
   const inicio = new Date(ahora);
   inicio.setHours(0, 0, 0, 0);
   inicio.setDate(ahora.getDate() - dia);
+
   const fin = new Date(inicio);
   fin.setDate(inicio.getDate() + 6);
 
-  const formato = fecha => fecha.toLocaleDateString('es-MX', {
-    day: 'numeric',
-    month: 'short'
-  });
+  const formato = fecha => fecha.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
   return `${formato(inicio)} - ${formato(fin)}`;
 }
 
 rangoSemanaActual.innerText = `Semana domingo → sábado · ${obtenerRangoSemanaActual()}`;
 
 /* ============================================================
-   PANEL CONFIGURACIÓN
-   ============================================================ */
+   CONFIGURACIÓN UI
+============================================================ */
 btnConfig.onclick = () => panelConfig.classList.toggle('hidden');
 btnCerrarConfig.onclick = () => panelConfig.classList.add('hidden');
 
-/* ------------------------------------------------------------
-   TARIFA (sincronizada)
------------------------------------------------------------- */
 function actualizarTarifa(valor) {
   const limpio = String(valor).replace(',', '.').replace(/[^0-9.]/g, '');
   const numero = parseFloat(limpio);
@@ -698,9 +670,6 @@ function actualizarTarifa(valor) {
 tarifaInput.addEventListener('input', e => actualizarTarifa(e.target.value));
 tarifaConfigInput.addEventListener('input', e => actualizarTarifa(e.target.value));
 
-/* ------------------------------------------------------------
-   IMPUESTOS / DEDUCCIÓN / OVERTIME
------------------------------------------------------------- */
 taxPorcentajeInput.addEventListener('input', e => {
   const valor = String(e.target.value).replace(',', '.');
   taxPorcentaje = Math.min(100, Math.max(0, parseFloat(valor) || 0));
@@ -730,8 +699,8 @@ overtimeTarifaInput.addEventListener('input', e => {
 });
 
 /* ============================================================
-   BOTONES DE HORA ACTUAL
-   ============================================================ */
+   BOTONES HORA ACTUAL
+============================================================ */
 $('btn-now-entrada').onclick = () => {
   entradaInput.value = horaLocal();
   guardarUltimasHoras();
@@ -743,35 +712,31 @@ $('btn-now-salida').onclick = () => {
 };
 
 entradaInput.onchange = guardarUltimasHoras;
-salidaInput.onchange  = guardarUltimasHoras;
+salidaInput.onchange = guardarUltimasHoras;
 
 /* ============================================================
-   CÁLCULO DE TURNO
-   ============================================================ */
+   CÁLCULOS
+============================================================ */
 function calcularTurno(item) {
   if (!item || !item.entrada || !item.salida) return 0;
 
   const entrada = item.entrada.split(':').map(Number);
-  const salida  = item.salida.split(':').map(Number);
-
+  const salida = item.salida.split(':').map(Number);
   if (entrada.length !== 2 || salida.length !== 2) return 0;
 
   const entradaMin = entrada[0] * 60 + entrada[1];
-  const salidaMin  = salida[0] * 60 + salida[1];
+  const salidaMin = salida[0] * 60 + salida[1];
 
   let diferencia = salidaMin - entradaMin;
   if (diferencia <= 0) diferencia += 1440; // turno nocturno
 
   const descanso = Math.max(0, Number(item.descanso) || 0);
   const minutosNetos = diferencia - descanso;
-
   if (minutosNetos <= 0) return 0;
+
   return minutosNetos / 60;
 }
 
-/* ============================================================
-   CÁLCULO DE NÓMINA
-   ============================================================ */
 function calcularPago(totalHoras) {
   const overtimeActivo = overtimeHoras > 0 && overtimeTarifa > 0;
 
@@ -784,27 +749,18 @@ function calcularPago(totalHoras) {
   }
 
   const pagoNormal = horasNormales * tarifa;
-  const pagoExtra  = horasExtra * overtimeTarifa;
-  const bruto      = pagoNormal + pagoExtra;
-  const impuestos  = bruto * (taxPorcentaje / 100);
-  const deduccion  = bruto > 0 ? deducFija : 0;
-  const neto       = Math.max(0, bruto - impuestos - deduccion);
+  const pagoExtra = horasExtra * overtimeTarifa;
+  const bruto = pagoNormal + pagoExtra;
+  const impuestos = bruto * (taxPorcentaje / 100);
+  const deduccion = bruto > 0 ? deducFija : 0;
+  const neto = Math.max(0, bruto - impuestos - deduccion);
 
-  return {
-    horasNormales,
-    horasExtra,
-    pagoNormal,
-    pagoExtra,
-    bruto,
-    impuestos,
-    deduccion,
-    neto
-  };
+  return { horasNormales, horasExtra, pagoNormal, pagoExtra, bruto, impuestos, deduccion, neto };
 }
 
 /* ============================================================
    SELECTOR DE SEMANAS
-   ============================================================ */
+============================================================ */
 function actualizarSelectorSemanas() {
   semanaSelector.innerHTML = '';
 
@@ -821,9 +777,6 @@ function actualizarSelectorSemanas() {
   });
 }
 
-/* ============================================================
-   RECALCULAR SEMANA ARCHIVADA
-   ============================================================ */
 function recalcularTotalesSemanaArchivada(sem) {
   if (!sem || !Array.isArray(sem.datos)) return;
 
@@ -842,10 +795,7 @@ function recalcularTotalesSemanaArchivada(sem) {
 
   const formato = f => {
     const [y, m, d] = f.split('-').map(Number);
-    return new Date(y, m - 1, d).toLocaleDateString('es-MX', {
-      day: 'numeric',
-      month: 'short'
-    });
+    return new Date(y, m - 1, d).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
   };
 
   sem.rango = `${formato(fechas[0])} - ${formato(fechas[fechas.length - 1])}`;
@@ -856,8 +806,8 @@ function recalcularTotalesSemanaArchivada(sem) {
 }
 
 /* ============================================================
-   RENDER PRINCIPAL
-   ============================================================ */
+   RENDER
+============================================================ */
 function renderApp() {
   guardarDatos();
   guardarConfiguracion();
@@ -898,12 +848,9 @@ function renderApp() {
       const [y, m, d] = item.fecha.split('-').map(Number);
       const fecha = new Date(y, m - 1, d);
       const fechaTexto = fecha.toLocaleDateString('es-MX', {
-        weekday: 'short',
-        day: 'numeric',
-        month: 'short'
+        weekday: 'short', day: 'numeric', month: 'short'
       });
 
-      // Encontramos el índice real (no el ordenado visualmente)
       let originalIndex = -1;
       if (vista === 'actual') {
         originalIndex = historial.findIndex(x => x.id === item.id);
@@ -913,12 +860,9 @@ function renderApp() {
       }
 
       historialLista.innerHTML += `
-        <div
-          onclick="editarDia(${originalIndex})"
-          class="bg-zinc-900/50 hover:bg-zinc-900/80 border border-zinc-800/80 p-4 rounded-2xl flex items-center justify-between relative overflow-hidden shadow-sm cursor-pointer transition-colors fade-in">
-
+        <div onclick="editarDia(${originalIndex})"
+          class="bg-zinc-900/50 hover:bg-zinc-900/80 border border-zinc-800/80 p-4 rounded-2xl flex items-center justify-between relative overflow-hidden shadow-sm cursor-pointer transition-colors">
           <div class="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500"></div>
-
           <div class="pl-2 min-w-0">
             <span class="text-xs font-black text-white capitalize">${fechaTexto}</span>
             <div class="flex gap-2.5 text-[10px] text-zinc-500 mt-0.5 font-bold flex-wrap">
@@ -927,7 +871,6 @@ function renderApp() {
               <span>Break: <strong class="text-zinc-400">${Number(item.descanso) || 0}m</strong></span>
             </div>
           </div>
-
           <div class="flex items-center gap-3 ml-2" onclick="event.stopPropagation();">
             <div class="text-right">
               <span class="text-sm font-black text-zinc-300 block">
@@ -937,10 +880,8 @@ function renderApp() {
               <span class="text-[10px] text-zinc-500 font-bold block">${horas.toFixed(2)} hrs</span>
               ${pago.horasExtra > 0 ? `<span class="text-[9px] text-orange-400 font-bold block">+${pago.horasExtra.toFixed(2)} extra</span>` : ''}
             </div>
-            <button
-              onclick="eliminarDia(${originalIndex})"
-              class="text-zinc-600 hover:text-rose-400 text-xs active:scale-90 transition-transform px-1 font-bold"
-              title="Eliminar">
+            <button onclick="eliminarDia(${originalIndex})"
+              class="text-zinc-600 hover:text-rose-400 text-xs active:scale-90 transition-transform px-1 font-bold">
               ✕
             </button>
           </div>
@@ -948,9 +889,8 @@ function renderApp() {
     });
   }
 
-  /* ---------- RESUMEN ---------- */
+  // Resumen
   const pagoTotal = calcularPago(totalHoras);
-
   totalHorasTxt.innerText = `${totalHoras.toFixed(2)}h`;
   totalDineroTxt.innerText = `$${dinero(pagoTotal.neto)}`;
   desgloseHorasNormales.innerText = `${pagoTotal.horasNormales.toFixed(2)}h`;
@@ -981,13 +921,14 @@ function renderApp() {
 }
 
 /* ============================================================
-   GUARDAR TURNO  (sin duplicados + limpia campos)
-   ============================================================ */
+   GUARDAR TURNO (sin duplicados + limpiar campos)
+============================================================ */
 btnGuardar.onclick = () => {
   if (!fechaInput.value) {
     alert('Selecciona una fecha.');
     return;
   }
+
   if (!entradaInput.value || !salidaInput.value) {
     alert('Pon la hora de Entrada y Salida.');
     return;
@@ -1005,10 +946,10 @@ btnGuardar.onclick = () => {
     return;
   }
 
-  // >>> BLOQUEO DE DUPLICADOS <<<
+  // === NO PERMITIR DUPLICADOS ===
   const duplicado = historial.find(x => x.fecha === fechaInput.value);
   if (duplicado) {
-    alert('Ya existe un registro para esta fecha.\n\nEdítalo desde el historial (toca el día) o elimínalo primero.');
+    alert('Ya existe un registro para esta fecha.\n\nEdítalo desde el historial o elimina el anterior primero.');
     return;
   }
 
@@ -1023,23 +964,17 @@ btnGuardar.onclick = () => {
   historial.push(nuevoTurno);
   guardarDatos();
 
-  // Limpiamos campos de hora para el siguiente día
+  // === LIMPIAR CAMPOS DE HORAS para el siguiente día ===
   entradaInput.value = '';
-  salidaInput.value  = '';
-  // Mantenemos el break en 30 por comodidad
-  descansoInput.value = '30';
-
-  // Avanzamos la fecha al día siguiente
-  const [y, m, d] = fechaInput.value.split('-').map(Number);
-  const siguiente = new Date(y, m - 1, d);
-  siguiente.setDate(siguiente.getDate() + 1);
-  fechaInput.value = `${siguiente.getFullYear()}-${String(siguiente.getMonth() + 1).padStart(2,'0')}-${String(siguiente.getDate()).padStart(2,'0')}`;
-
-  // Limpiamos también el storage de últimas horas
+  salidaInput.value = '';
   localStorage.removeItem('tt_last_entrada');
   localStorage.removeItem('tt_last_salida');
 
-  // Feedback visual
+  // Opcional: avanzar la fecha un día (más cómodo)
+  const d = new Date(fechaInput.value + 'T12:00:00');
+  d.setDate(d.getDate() + 1);
+  fechaInput.value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
   btnGuardar.innerText = '✅ ¡Guardado!';
   setTimeout(() => {
     btnGuardar.innerText = '📥 Guardar Turno en Historial';
@@ -1050,21 +985,19 @@ btnGuardar.onclick = () => {
 
 /* ============================================================
    ARCHIVAR SEMANA
-   ============================================================ */
+============================================================ */
 btnCerrarSemana.onclick = () => {
   if (historial.length === 0) {
     alert('No tienes ningún turno registrado para archivar.');
     return;
   }
+
   if (!confirm('¿Quieres cerrar y archivar la semana actual?\nEsto limpiará la pantalla principal.')) return;
 
   const fechas = historial.map(h => h.fecha).filter(Boolean).sort();
   const formato = f => {
     const [y, m, d] = f.split('-').map(Number);
-    return new Date(y, m - 1, d).toLocaleDateString('es-MX', {
-      day: 'numeric',
-      month: 'short'
-    });
+    return new Date(y, m - 1, d).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
   };
 
   let totalH = 0;
@@ -1083,8 +1016,8 @@ btnCerrarSemana.onclick = () => {
   localStorage.removeItem('tt_last_entrada');
   localStorage.removeItem('tt_last_salida');
   entradaInput.value = '';
-  salidaInput.value  = '';
-  fechaInput.value   = fechaLocal();
+  salidaInput.value = '';
+  fechaInput.value = fechaLocal();
 
   guardarDatos();
   actualizarSelectorSemanas();
@@ -1096,7 +1029,7 @@ btnCerrarSemana.onclick = () => {
 
 /* ============================================================
    ELIMINAR
-   ============================================================ */
+============================================================ */
 window.eliminarDia = index => {
   if (index < 0) return;
   if (!confirm('¿Quieres eliminar este registro?')) return;
@@ -1121,9 +1054,9 @@ window.eliminarDia = index => {
 
 /* ============================================================
    EDITAR
-   ============================================================ */
+============================================================ */
 let indiceEditando = null;
-let vistaEditando  = null;
+let vistaEditando = null;
 
 window.editarDia = index => {
   const vista = semanaSelector.value;
@@ -1135,14 +1068,15 @@ window.editarDia = index => {
     const sem = semanasArchivadas.find(s => String(s.id) === String(vista));
     if (sem) turno = sem.datos[index];
   }
+
   if (!turno) return;
 
   indiceEditando = index;
-  vistaEditando  = vista;
+  vistaEditando = vista;
 
-  editarFecha.value    = turno.fecha;
-  editarEntrada.value  = turno.entrada;
-  editarSalida.value   = turno.salida;
+  editarFecha.value = turno.fecha;
+  editarEntrada.value = turno.entrada;
+  editarSalida.value = turno.salida;
   editarDescanso.value = turno.descanso;
 
   modalEditar.classList.remove('hidden');
@@ -1169,22 +1103,19 @@ $('btn-guardar-edicion').onclick = () => {
   }
 
   // Evitar duplicar fecha al editar (excepto el propio registro)
-  let lista = null;
+  let existeOtra = false;
   if (vistaEditando === 'actual') {
-    lista = historial;
+    existeOtra = historial.some((x, i) => x.fecha === editarFecha.value && i !== indiceEditando);
   } else {
     const sem = semanasArchivadas.find(s => String(s.id) === String(vistaEditando));
-    if (sem) lista = sem.datos;
+    if (sem) {
+      existeOtra = sem.datos.some((x, i) => x.fecha === editarFecha.value && i !== indiceEditando);
+    }
   }
 
-  if (lista) {
-    const otroConMismaFecha = lista.find((x, i) =>
-      x.fecha === editarFecha.value && i !== indiceEditando
-    );
-    if (otroConMismaFecha) {
-      alert('Ya existe otro registro con esa fecha.\nNo se puede duplicar.');
-      return;
-    }
+  if (existeOtra) {
+    alert('Ya existe otro registro con esa fecha.');
+    return;
   }
 
   let turno = null;
@@ -1194,11 +1125,12 @@ $('btn-guardar-edicion').onclick = () => {
     const sem = semanasArchivadas.find(s => String(s.id) === String(vistaEditando));
     if (sem) turno = sem.datos[indiceEditando];
   }
+
   if (!turno) return;
 
-  turno.fecha    = editarFecha.value;
-  turno.entrada  = editarEntrada.value;
-  turno.salida   = editarSalida.value;
+  turno.fecha = editarFecha.value;
+  turno.entrada = editarEntrada.value;
+  turno.salida = editarSalida.value;
   turno.descanso = descanso;
 
   if (vistaEditando !== 'actual') {
@@ -1213,14 +1145,13 @@ $('btn-guardar-edicion').onclick = () => {
   renderApp();
 };
 
-/* Cerrar modal al tocar fuera */
 modalEditar.addEventListener('click', e => {
   if (e.target === modalEditar) modalEditar.classList.add('hidden');
 });
 
 /* ============================================================
    LIMPIAR
-   ============================================================ */
+============================================================ */
 btnClearAll.onclick = () => {
   const vista = semanaSelector.value;
 
@@ -1230,7 +1161,7 @@ btnClearAll.onclick = () => {
     localStorage.removeItem('tt_last_entrada');
     localStorage.removeItem('tt_last_salida');
     entradaInput.value = '';
-    salidaInput.value  = '';
+    salidaInput.value = '';
     guardarDatos();
     renderApp();
   } else {
@@ -1243,32 +1174,24 @@ btnClearAll.onclick = () => {
   }
 };
 
-/* ============================================================
-   SELECTOR
-   ============================================================ */
 semanaSelector.onchange = () => renderApp();
 
 /* ============================================================
    EXPORTAR CSV
-   ============================================================ */
+============================================================ */
 $('btn-exportar-csv').onclick = () => {
   const filas = [[
-    'Fecha', 'Entrada', 'Salida', 'Break',
-    'Horas', 'Horas normales', 'Horas extra', 'Bruto'
+    'Fecha', 'Entrada', 'Salida', 'Break', 'Horas',
+    'Horas normales', 'Horas extra', 'Bruto'
   ]];
 
   const agregar = item => {
     const horas = calcularTurno(item);
-    const pago  = calcularPago(horas);
+    const pago = calcularPago(horas);
     filas.push([
-      item.fecha,
-      item.entrada,
-      item.salida,
-      item.descanso,
-      horas.toFixed(2),
-      pago.horasNormales.toFixed(2),
-      pago.horasExtra.toFixed(2),
-      pago.bruto.toFixed(2)
+      item.fecha, item.entrada, item.salida, item.descanso,
+      horas.toFixed(2), pago.horasNormales.toFixed(2),
+      pago.horasExtra.toFixed(2), pago.bruto.toFixed(2)
     ]);
   };
 
@@ -1282,9 +1205,9 @@ $('btn-exportar-csv').onclick = () => {
   ).join('\n');
 
   const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
   a.download = `TimeTracker-${fechaLocal()}.csv`;
   document.body.appendChild(a);
   a.click();
@@ -1294,26 +1217,22 @@ $('btn-exportar-csv').onclick = () => {
 
 /* ============================================================
    RESPALDO JSON
-   ============================================================ */
+============================================================ */
 $('btn-exportar-json').onclick = () => {
   const respaldo = {
-    version: 4,
+    version: 5,
     fechaRespaldo: new Date().toISOString(),
     historial,
     semanasArchivadas,
     configuracion: {
-      tarifa,
-      taxPorcentaje,
-      deducFija,
-      overtimeHoras,
-      overtimeTarifa
+      tarifa, taxPorcentaje, deducFija, overtimeHoras, overtimeTarifa
     }
   };
 
   const blob = new Blob([JSON.stringify(respaldo, null, 2)], { type: 'application/json' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
   a.download = `TimeTracker-Respaldo-${fechaLocal()}.json`;
   document.body.appendChild(a);
   a.click();
@@ -1322,8 +1241,8 @@ $('btn-exportar-json').onclick = () => {
 };
 
 /* ============================================================
-   RESTAURAR RESPALDO
-   ============================================================ */
+   RESTAURAR
+============================================================ */
 $('btn-importar-json').onclick = () => $('input-importar-json').click();
 
 $('input-importar-json').onchange = event => {
@@ -1341,36 +1260,30 @@ $('input-importar-json').onchange = event => {
 
       if (!confirm('Este respaldo reemplazará los datos actuales. ¿Continuar?')) return;
 
-      // Respaldo de seguridad antes de importar
+      // Respaldo de seguridad antes de restaurar
       localStorage.setItem('tt_before_import_backup', JSON.stringify({
-        historial,
-        semanasArchivadas,
-        tarifa,
-        taxPorcentaje,
-        deducFija,
-        overtimeHoras,
-        overtimeTarifa
+        historial, semanasArchivadas, tarifa, taxPorcentaje, deducFija, overtimeHoras, overtimeTarifa
       }));
 
-      historial         = datos.historial;
+      historial = datos.historial;
       semanasArchivadas = datos.semanasArchivadas;
 
       if (datos.configuracion) {
-        if (typeof datos.configuracion.tarifa === 'number')          tarifa = datos.configuracion.tarifa;
-        if (typeof datos.configuracion.taxPorcentaje === 'number')   taxPorcentaje = datos.configuracion.taxPorcentaje;
-        if (typeof datos.configuracion.deducFija === 'number')       deducFija = datos.configuracion.deducFija;
-        if (typeof datos.configuracion.overtimeHoras === 'number')   overtimeHoras = datos.configuracion.overtimeHoras;
-        if (typeof datos.configuracion.overtimeTarifa === 'number')  overtimeTarifa = datos.configuracion.overtimeTarifa;
+        if (typeof datos.configuracion.tarifa === 'number') tarifa = datos.configuracion.tarifa;
+        if (typeof datos.configuracion.taxPorcentaje === 'number') taxPorcentaje = datos.configuracion.taxPorcentaje;
+        if (typeof datos.configuracion.deducFija === 'number') deducFija = datos.configuracion.deducFija;
+        if (typeof datos.configuracion.overtimeHoras === 'number') overtimeHoras = datos.configuracion.overtimeHoras;
+        if (typeof datos.configuracion.overtimeTarifa === 'number') overtimeTarifa = datos.configuracion.overtimeTarifa;
       }
 
       guardarDatos();
       guardarConfiguracion();
 
-      tarifaInput.value         = tarifa;
-      tarifaConfigInput.value   = tarifa;
-      taxPorcentajeInput.value  = taxPorcentaje;
-      deducFijaInput.value      = deducFija;
-      overtimeHorasInput.value  = overtimeHoras;
+      tarifaInput.value = tarifa;
+      tarifaConfigInput.value = tarifa;
+      taxPorcentajeInput.value = taxPorcentaje;
+      deducFijaInput.value = deducFija;
+      overtimeHorasInput.value = overtimeHoras;
       overtimeTarifaInput.value = overtimeTarifa;
 
       actualizarSelectorSemanas();
@@ -1387,23 +1300,122 @@ $('input-importar-json').onchange = event => {
 };
 
 /* ============================================================
-   RESTABLECER SOLO CONFIGURACIÓN
-   ============================================================ */
+   RESET CONFIG (no borra registros)
+============================================================ */
 $('btn-reset-config').onclick = () => {
   if (!confirm('Esto pondrá las configuraciones en cero, pero NO borrará tus registros. ¿Continuar?')) return;
 
-  tarifa = overtimeHoras = overtimeTarifa = taxPorcentaje = deducFija = 0;
+  tarifa = 0;
+  overtimeHoras = 0;
+  overtimeTarifa = 0;
+  taxPorcentaje = 0;
+  deducFija = 0;
 
-  tarifaInput.value = tarifaConfigInput.value = overtimeHorasInput.value =
-  overtimeTarifaInput.value = taxPorcentajeInput.value = deducFijaInput.value = 0;
+  tarifaInput.value = 0;
+  tarifaConfigInput.value = 0;
+  overtimeHorasInput.value = 0;
+  overtimeTarifaInput.value = 0;
+  taxPorcentajeInput.value = 0;
+  deducFijaInput.value = 0;
 
   guardarConfiguracion();
   renderApp();
 };
 
 /* ============================================================
+   PWA - Manifest + Service Worker + Install prompt
+============================================================ */
+(function setupPWA() {
+  // 1. Manifest dinámico
+  const manifest = {
+    name: "TimeTracker Pro",
+    short_name: "TimeTracker",
+    description: "Control de horas y nómina personal",
+    start_url: "./",
+    display: "standalone",
+    background_color: "#09090b",
+    theme_color: "#09090b",
+    orientation: "portrait-primary",
+    icons: [
+      {
+        src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%234f46e5'/%3E%3Ctext x='96' y='125' font-size='90' text-anchor='middle' fill='white'%3E⚡%3C/text%3E%3C/svg%3E",
+        sizes: "192x192",
+        type: "image/svg+xml",
+        purpose: "any maskable"
+      },
+      {
+        src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%234f46e5'/%3E%3Ctext x='256' y='340' font-size='240' text-anchor='middle' fill='white'%3E⚡%3C/text%3E%3C/svg%3E",
+        sizes: "512x512",
+        type: "image/svg+xml",
+        purpose: "any maskable"
+      }
+    ]
+  };
+
+  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+  const manifestURL = URL.createObjectURL(blob);
+  document.getElementById('manifest-link').href = manifestURL;
+
+  // 2. Service Worker simple (cachea la página actual)
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+      const CACHE = 'timetracker-v5';
+      self.addEventListener('install', e => {
+        e.waitUntil(
+          caches.open(CACHE).then(cache => cache.addAll(['./', './index.html']).catch(() => {}))
+        );
+        self.skipWaiting();
+      });
+      self.addEventListener('activate', e => {
+        e.waitUntil(
+          caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+        );
+        self.clients.claim();
+      });
+      self.addEventListener('fetch', e => {
+        e.respondWith(
+          caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match('./')))
+        );
+      });
+    `;
+    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+    const swURL = URL.createObjectURL(swBlob);
+
+    navigator.serviceWorker.register(swURL).catch(err => {
+      console.log('SW registration failed (normal en file://):', err);
+    });
+  }
+
+  // 3. Prompt de instalación
+  let deferredPrompt = null;
+  const banner = document.getElementById('pwa-install-banner');
+  const btnInstall = document.getElementById('btn-install-pwa');
+
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    banner.classList.remove('hidden');
+  });
+
+  btnInstall.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      banner.classList.add('hidden');
+    }
+    deferredPrompt = null;
+  });
+
+  window.addEventListener('appinstalled', () => {
+    banner.classList.add('hidden');
+    deferredPrompt = null;
+  });
+})();
+
+/* ============================================================
    INICIO
-   ============================================================ */
+============================================================ */
 actualizarSelectorSemanas();
 semanaSelector.value = 'actual';
 renderApp();
